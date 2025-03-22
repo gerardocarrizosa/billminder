@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -26,8 +26,12 @@ import {
 } from '../interfaces/login.validation-schema';
 import toast from 'react-hot-toast';
 import { auth } from '@/lib/firebase';
+import { useAuth } from '@/context/AuthContext';
 
 const LoginScreen = () => {
+  const { user, loading } = useAuth();
+  if (!loading && user) return <Navigate to={'/home'} replace />;
+
   const navigate = useNavigate();
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -61,7 +65,6 @@ const LoginScreen = () => {
     }
   };
 
-  // Helper function to get readable error messages
   const getErrorMessage = (errorCode: string) => {
     switch (errorCode) {
       case 'auth/invalid-email':

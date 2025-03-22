@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import UserProfile from './modules/profile/screens/user-profile';
 import LoginScreen from './modules/login/screens/login';
 import ProtectedRoute from './modules/common/components/protected-route';
+import { AuthProvider } from './context/AuthContext';
 
 const router = createBrowserRouter([
   {
@@ -43,8 +44,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Toaster />
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <Toaster />
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
