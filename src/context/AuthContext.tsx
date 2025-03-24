@@ -44,7 +44,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
       if (authUser) {
-        console.log('authUser =>', authUser);
         // Fetch user data from Firestore when authenticated
         try {
           const firestoreUser = await userService.getUserByUid(authUser.uid);
@@ -114,6 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // If user doesn't exist, create a new user document
       if (!firestoreUser) {
         const newUser: User = {
+          id: '',
           name: firebaseUser.displayName || '',
           email: firebaseUser.email || '',
           uid: firebaseUser.uid,

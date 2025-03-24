@@ -5,7 +5,11 @@ const ProtectedRoute = () => {
   const { user, loading } = useAuth();
 
   if (loading)
-    return <span className="loading loading-spinner loading-xl"></span>;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <span className="loading loading-spinner loading-xl"></span>
+      </div>
+    );
 
   return user ? <Outlet /> : <Navigate to="/login" replace />;
 };

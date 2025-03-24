@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import {
   Card,
   CardContent,
@@ -25,38 +25,24 @@ import {
 } from '@/modules/common/components/ui/select';
 import { toast } from 'react-hot-toast';
 import { PenLine, Camera, User as UserIcon, Check, X } from 'lucide-react';
-import { userProfileSchema } from '../interfaces/user.validation-schema';
+import { userValidationSchema } from '../interfaces/user.validation-schema';
 import { useAuth } from '@/context/AuthContext';
 import { User } from '../interfaces/user.interface';
+import userService from '@/lib/api/users.api';
+import FormInput from '@/modules/common/components/form-input';
+import FormSelect from '@/modules/common/components/form-select';
+import FormDatePicker from '@/modules/common/components/form-date-picker';
 
 const UserProfileScreen: React.FC = () => {
+  const [isEditing, setIsEditing] = useState(false);
   const { user: fb_user } = useAuth();
 
   if (!fb_user) return null;
 
-  const [user, setUser] = useState<User>({
-    id: fb_user.id,
-    uid: fb_user.uid,
-    email: fb_user.email,
-    name: fb_user.name,
-    phoneNumber: fb_user.phoneNumber,
-    dateOfBirth: fb_user.dateOfBirth,
-    gender: fb_user.gender,
-    profilePhoto: fb_user.profilePhoto,
-  });
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleSubmit = (
-    values: User,
-    { setSubmitting }: FormikHelpers<User>
-  ) => {
-    // In a real app, you'd send this data to your backend
-    setTimeout(() => {
-      setUser(values);
-      setIsEditing(false);
-      setSubmitting(false);
-      toast('Profile updated');
-    }, 500);
+  const handleSubmit = async (values: User) => {
+    await userService.updateUser(fb_user.id, values);
+    setIsEditing(false);
+    toast('Profile updated');
   };
 
   return (
@@ -83,11 +69,20 @@ const UserProfileScreen: React.FC = () => {
         <CardContent>
           {isEditing ? (
             <Formik
-              initialValues={user}
-              validationSchema={userProfileSchema}
+              initialValues={{
+                id: fb_user.id,
+                uid: fb_user.uid,
+                email: fb_user.email,
+                name: fb_user.name,
+                phoneNumber: fb_user.phoneNumber,
+                dateOfBirth: fb_user.dateOfBirth,
+                gender: fb_user.gender,
+                profilePhoto: fb_user.profilePhoto,
+              }}
+              validationSchema={userValidationSchema}
               onSubmit={handleSubmit}
             >
-              {({ values, errors, touched, isSubmitting, setFieldValue }) => (
+              {({ values, isSubmitting, setFieldValue }) => (
                 <Form className="space-y-6">
                   <div className="flex flex-col md:flex-row gap-8">
                     {/* Profile Photo Section */}
@@ -124,103 +119,23 @@ const UserProfileScreen: React.FC = () => {
                     {/* Profile Details Section */}
                     <div className="flex-1 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Full Name</Label>
-                          <Field name="name">
-                            {({ field }: any) => (
-                              <Input
-                                id="name"
-                                {...field}
-                                className={
-                                  errors.name && touched.name
-                                    ? 'border-red-500'
-                                    : ''
-                                }
-                              />
-                            )}
-                          </Field>
-                          <ErrorMessage
-                            name="name"
-                            component="div"
-                            className="text-red-500 text-sm"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Field name="email">
-                            {({ field }: any) => (
-                              <Input
-                                id="email"
-                                type="email"
-                                {...field}
-                                className={
-                                  errors.email && touched.email
-                                    ? 'border-red-500'
-                                    : ''
-                                }
-                              />
-                            )}
-                          </Field>
-                          <ErrorMessage
-                            name="email"
-                            component="div"
-                            className="text-red-500 text-sm"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phoneNumber">Phone Number</Label>
-                          <Field name="phoneNumber">
-                            {({ field }: any) => (
-                              <Input
-                                id="phoneNumber"
-                                {...field}
-                                className={
-                                  errors.phoneNumber && touched.phoneNumber
-                                    ? 'border-red-500'
-                                    : ''
-                                }
-                              />
-                            )}
-                          </Field>
-                          <ErrorMessage
-                            name="phoneNumber"
-                            component="div"
-                            className="text-red-500 text-sm"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="gender">Gender</Label>
-                          <Select
-                            value={values.gender}
-                            onValueChange={(value) =>
-                              setFieldValue('gender', value)
-                            }
-                          >
-                            <SelectTrigger
-                              id="gender"
-                              className={
-                                errors.gender && touched.gender
-                                  ? 'border-red-500'
-                                  : ''
-                              }
-                            >
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <ErrorMessage
-                            name="gender"
-                            component="div"
-                            className="text-red-500 text-sm"
-                          />
-                        </div>
+                        <FormInput label="Nombre" name="name" />
+                        <FormInput label="Correo electrónico" name="email" />
+                        <FormInput label="Telefono" name="phoneNumber" />
+                        <FormSelect
+                          name="gender"
+                          label="Género"
+                          options={[
+                            { label: 'Male', value: 'male' },
+                            { label: 'Female', value: 'female' },
+                            { label: 'Other', value: 'other' },
+                          ]}
+                          placeholder="Select gender"
+                        />
+                        <FormDatePicker
+                          name="dateOfBirth"
+                          label="Fecha de nacimiento"
+                        />
                       </div>
                     </div>
                   </div>
@@ -252,7 +167,7 @@ const UserProfileScreen: React.FC = () => {
               {/* Profile Photo Section */}
               <div className="flex flex-col items-center">
                 <Avatar className="h-32 w-32">
-                  <AvatarImage src={user.profilePhoto} alt={user.name} />
+                  <AvatarImage src={fb_user.profilePhoto} alt={fb_user.name} />
                   <AvatarFallback>
                     <UserIcon size={64} />
                   </AvatarFallback>
@@ -264,22 +179,27 @@ const UserProfileScreen: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <p className="text-lg">{user.name}</p>
+                    <p className="text-lg">{fb_user.name}</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <p className="text-lg">{user.email}</p>
+                    <p className="text-lg">{fb_user.email}</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
-                    <p className="text-lg">{user.phoneNumber}</p>
+                    <p className="text-lg">{fb_user.phoneNumber}</p>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="gender">Gender</Label>
-                    <p className="text-lg capitalize">{user.gender}</p>
+                    <p className="text-lg capitalize">{fb_user.gender}</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Fecha de nacimiento</Label>
+                    <p className="text-lg capitalize">{fb_user.dateOfBirth}</p>
                   </div>
                 </div>
               </div>
