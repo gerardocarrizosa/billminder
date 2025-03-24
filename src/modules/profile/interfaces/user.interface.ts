@@ -1,7 +1,10 @@
-export interface UserProfile {
+export interface User {
+  id?: string;
   name: string;
   email: string;
-  phoneNumber: string;
-  gender: 'male' | 'female' | 'other' | '';
-  profilePhoto: string;
+  uid: string;
+  gender?: 'male' | 'female' | 'other';
+  dateOfBirth?: string;
+  phoneNumber?: string;
+  profilePhoto?: string;
 }

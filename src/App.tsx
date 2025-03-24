@@ -6,36 +6,39 @@ import {
 import HomeScreen from './modules/home/screens/home-screen';
 import { ThemeProvider } from './modules/common/components/theme-controller';
 import { Toaster } from 'react-hot-toast';
+import Layout from './modules/common/components/layout';
+import ProtectedRoute from './modules/common/components/protected-route';
 import UserProfile from './modules/profile/screens/user-profile';
 import LoginScreen from './modules/login/screens/login';
-import ProtectedRoute from './modules/common/components/protected-route';
 import { AuthProvider } from './context/AuthContext';
+import SignupScreen from './modules/signup/screens/signup';
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Navigate to={'/home'} replace />,
-  },
   {
     path: '/login',
     element: <LoginScreen />,
   },
   {
     path: '/signup',
-    element: <div>Signup</div>,
+    element: <SignupScreen />,
   },
   {
     path: '/',
-    // element: <HomeScreen />,
     element: <ProtectedRoute />,
     children: [
       {
-        path: 'home',
-        element: <HomeScreen />,
-      },
-      {
-        path: 'profile',
-        element: <UserProfile />,
+        path: '/',
+        element: <Layout />,
+        children: [
+          {
+            path: 'home',
+            element: <HomeScreen />,
+          },
+          {
+            path: 'profile',
+            element: <UserProfile />,
+          },
+        ],
       },
     ],
   },

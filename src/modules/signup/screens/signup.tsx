@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useNavigate, Link, Navigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -12,58 +12,57 @@ import {
 import { Button } from '@/modules/common/components/ui/button';
 import { Input } from '@/modules/common/components/ui/input';
 import { Label } from '@/modules/common/components/ui/label';
+import { Checkbox } from '@/modules/common/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/modules/common/components/ui/alert';
-import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import {
-  LoginFormValues,
-  loginSchema,
-} from '../interfaces/login.validation-schema';
+  SignupFormValues,
+  signupSchema,
+} from '../interfaces/signup.validation-schema';
 import { useAuth } from '@/context/AuthContext';
 import { getErrorMessage } from '@/lib/firebase-errors.helper';
 
-const LoginScreen = () => {
-  const { user, loading, login, googleSignIn } = useAuth();
-  if (!loading && user) return <Navigate to={'/home'} replace />;
-
+const SignupScreen = () => {
   const navigate = useNavigate();
   const [authError, setAuthError] = useState<string | null>(null);
+  const { signup, googleSignIn } = useAuth();
 
   const handleSubmit = async (
-    values: LoginFormValues,
+    values: SignupFormValues,
     { setSubmitting }: any
   ) => {
     try {
       setAuthError(null);
-      await login(values.email, values.password);
-      navigate('/home'); // Navigate to profile page on success
+      await signup(values.email, values.password, { name: values.name });
+      navigate('/profile'); // Navigate to profile page on success
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('Signup error:', error);
       setAuthError(getErrorMessage(error.code));
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       setAuthError(null);
       await googleSignIn();
-      navigate('/profile');
+      navigate('/home');
     } catch (error: any) {
-      console.error('Google sign-in error:', error);
+      console.error('Google sign-up error:', error);
       setAuthError(getErrorMessage(error.code));
     }
   };
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-md h-screen flex flex-col justify-center">
+    <div className="container mx-auto py-10 px-4 max-w-md">
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Login
+            Create an account
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Enter your information to create an account
           </CardDescription>
         </CardHeader>
 
@@ -76,12 +75,46 @@ const LoginScreen = () => {
           )}
 
           <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={loginSchema}
+            initialValues={{
+              name: '',
+              email: '',
+              password: '',
+              confirmPassword: '',
+              terms: false,
+            }}
+            validationSchema={signupSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting, errors, touched }) => (
               <Form className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="relative">
+                    <Field name="name">
+                      {({ field }: any) => (
+                        <div className="flex items-center">
+                          <User className="absolute left-3 h-5 w-5 text-gray-400" />
+                          <Input
+                            id="name"
+                            className={`pl-10 ${
+                              errors.name && touched.name
+                                ? 'border-red-500'
+                                : ''
+                            }`}
+                            placeholder="John Doe"
+                            {...field}
+                          />
+                        </div>
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
@@ -112,15 +145,7 @@ const LoginScreen = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    <Link
-                      to="/forgot-password"
-                      className="text-sm text-blue-600 hover:text-blue-800"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
+                  <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Field name="password">
                       {({ field }: any) => (
@@ -148,13 +173,76 @@ const LoginScreen = () => {
                   </div>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Field name="confirmPassword">
+                      {({ field }: any) => (
+                        <div className="flex items-center">
+                          <Lock className="absolute left-3 h-5 w-5 text-gray-400" />
+                          <Input
+                            id="confirmPassword"
+                            type="password"
+                            className={`pl-10 ${
+                              errors.confirmPassword && touched.confirmPassword
+                                ? 'border-red-500'
+                                : ''
+                            }`}
+                            placeholder="••••••••"
+                            {...field}
+                          />
+                        </div>
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="confirmPassword"
+                      component="div"
+                      className="text-red-500 text-sm mt-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Field name="terms">
+                    {({ field, form }: any) => (
+                      <Checkbox
+                        id="terms"
+                        checked={field.value}
+                        onCheckedChange={(checked) => {
+                          form.setFieldValue('terms', checked);
+                        }}
+                        className={
+                          errors.terms && touched.terms ? 'border-red-500' : ''
+                        }
+                      />
+                    )}
+                  </Field>
+                  <label
+                    htmlFor="terms"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    I agree to the{' '}
+                    <Link
+                      to="/terms"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      terms and conditions
+                    </Link>
+                  </label>
+                </div>
+                <ErrorMessage
+                  name="terms"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+
                 <Button
                   type="submit"
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  <LogIn className="mr-2 h-4 w-4" />
-                  {isSubmitting ? 'Logging in...' : 'Login'}
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  {isSubmitting ? 'Creating account...' : 'Sign Up'}
                 </Button>
               </Form>
             )}
@@ -175,7 +263,7 @@ const LoginScreen = () => {
             type="button"
             variant="outline"
             className="w-full"
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleSignUp}
           >
             <svg viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
@@ -195,18 +283,18 @@ const LoginScreen = () => {
                 fill="#EA4335"
               />
             </svg>
-            Sign in with Google
+            Sign up with Google
           </Button>
         </CardContent>
 
         <CardFooter className="flex justify-center">
           <p className="text-sm text-center text-gray-600">
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link
-              to="/signup"
+              to="/login"
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
-              Sign up
+              Login
             </Link>
           </p>
         </CardFooter>
@@ -215,4 +303,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default SignupScreen;

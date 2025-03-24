@@ -24,25 +24,31 @@ import {
   SelectValue,
 } from '@/modules/common/components/ui/select';
 import { toast } from 'react-hot-toast';
-import { PenLine, Camera, User, Check, X } from 'lucide-react';
-import { UserProfile } from '../interfaces/user.interface';
+import { PenLine, Camera, User as UserIcon, Check, X } from 'lucide-react';
 import { userProfileSchema } from '../interfaces/user.validation-schema';
+import { useAuth } from '@/context/AuthContext';
+import { User } from '../interfaces/user.interface';
 
 const UserProfileScreen: React.FC = () => {
-  // Mock initial user data - in a real app, you'd fetch this from your backend
-  const [user, setUser] = useState<UserProfile>({
-    name: 'Alex Johnson',
-    email: 'alex.johnson@example.com',
-    phoneNumber: '(555) 123-4567',
-    gender: 'male',
-    profilePhoto: '/api/placeholder/150/150', // Using a placeholder image
-  });
+  const { user: fb_user } = useAuth();
 
+  if (!fb_user) return null;
+
+  const [user, setUser] = useState<User>({
+    id: fb_user.id,
+    uid: fb_user.uid,
+    email: fb_user.email,
+    name: fb_user.name,
+    phoneNumber: fb_user.phoneNumber,
+    dateOfBirth: fb_user.dateOfBirth,
+    gender: fb_user.gender,
+    profilePhoto: fb_user.profilePhoto,
+  });
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSubmit = (
-    values: UserProfile,
-    { setSubmitting }: FormikHelpers<UserProfile>
+    values: User,
+    { setSubmitting }: FormikHelpers<User>
   ) => {
     // In a real app, you'd send this data to your backend
     setTimeout(() => {
@@ -81,14 +87,7 @@ const UserProfileScreen: React.FC = () => {
               validationSchema={userProfileSchema}
               onSubmit={handleSubmit}
             >
-              {({
-                values,
-                errors,
-                touched,
-                isSubmitting,
-                setFieldValue,
-                handleChange,
-              }) => (
+              {({ values, errors, touched, isSubmitting, setFieldValue }) => (
                 <Form className="space-y-6">
                   <div className="flex flex-col md:flex-row gap-8">
                     {/* Profile Photo Section */}
@@ -99,7 +98,7 @@ const UserProfileScreen: React.FC = () => {
                           alt={values.name}
                         />
                         <AvatarFallback>
-                          <User size={64} />
+                          <UserIcon size={64} />
                         </AvatarFallback>
                       </Avatar>
 
@@ -255,7 +254,7 @@ const UserProfileScreen: React.FC = () => {
                 <Avatar className="h-32 w-32">
                   <AvatarImage src={user.profilePhoto} alt={user.name} />
                   <AvatarFallback>
-                    <User size={64} />
+                    <UserIcon size={64} />
                   </AvatarFallback>
                 </Avatar>
               </div>
