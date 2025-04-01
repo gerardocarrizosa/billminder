@@ -7,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/ui/dropdown-menu';
-import { Button } from '@/modules/common/components/ui/button';
 import { User, UserCircle, LogOut } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 import toast from 'react-hot-toast';
@@ -28,10 +27,8 @@ const ProfileDropdown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="ghost" size="icon" aria-label="Profile">
-          <User size={20} />
-        </Button>
+      <DropdownMenuTrigger className="btn btn-ghost btn-sm">
+        <User size={20} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem asChild>

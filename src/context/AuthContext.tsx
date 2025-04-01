@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Create user document in Firestore
       const newUser: User = {
+        id: '',
         name: additionalUserData.name || '', // Ensure name is not empty
         email: firebaseUser.email || email,
         uid: firebaseUser.uid,

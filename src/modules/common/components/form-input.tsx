@@ -6,9 +6,10 @@ import { Label } from './ui/label';
 interface FormInputProps {
   label: string;
   name: string;
-  type?: string;
+  type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -17,11 +18,12 @@ const FormInput: React.FC<FormInputProps> = ({
   type = 'text',
   placeholder = '',
   disabled = false,
+  className,
 }) => {
   const [field, meta] = useField(name);
 
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name}>{label}</Label>
       <Input
         {...field}

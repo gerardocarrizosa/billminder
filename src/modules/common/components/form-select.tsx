@@ -1,4 +1,3 @@
-// form-select.tsx
 import React from 'react';
 import { useField } from 'formik';
 import { Label } from './ui/label';
@@ -21,6 +20,7 @@ interface FormSelectProps {
   options: Option[];
   placeholder?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
@@ -29,11 +29,13 @@ const FormSelect: React.FC<FormSelectProps> = ({
   options,
   placeholder = 'Select an option',
   disabled = false,
+  className,
 }) => {
   const [field, meta, helpers] = useField(name);
 
   return (
-    <div className="mb-4">
+    // <div className="mb-4">
+    <div className={`mb-4 ${className}`}>
       <Label htmlFor={name} className="block text-sm font-medium mb-1">
         {label}
       </Label>

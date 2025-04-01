@@ -1,21 +1,21 @@
 import { useTheme } from '@/modules/common/components/theme-controller';
 import { Button } from '@/modules/common/components/ui/button';
-import ProfileDropdown from '@/modules/home/components/profile-dropdown-menu';
 import { DollarSign, Home, Menu, Moon, Sun, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import ProfileDropdown from '@/modules/home/components/profile-dropdown-menu';
 
 function Layout() {
   const { setTheme, theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const routes = [
     {
-      path: '/home',
+      path: 'home',
       name: 'Home',
       icon: <Home size={20} />,
     },
     {
-      path: '#',
+      path: 'bills',
       name: 'Bills',
       icon: <DollarSign size={20} />,
     },
@@ -74,14 +74,15 @@ function Layout() {
               </div>
               <div className="space-y-4">
                 {routes.map((r) => (
-                  <a
+                  <Link
                     key={r.path}
-                    href={r.path}
+                    to={r.path}
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
                     className="flex items-center gap-2 py-2 text-foreground hover:text-primary"
                   >
                     {r.icon}
                     <span>{r.name}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </nav>
@@ -92,14 +93,15 @@ function Layout() {
         <nav className="hidden md:block w-64 border-r p-6">
           <div className="space-y-4">
             {routes.map((r) => (
-              <a
+              <Link
                 key={r.path}
-                href={r.path}
+                to={r.path}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="flex items-center gap-2 py-2 text-foreground hover:text-primary"
               >
                 {r.icon}
                 <span>{r.name}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </nav>
