@@ -37,8 +37,7 @@ const router = createBrowserRouter([
           {
             path: 'bills',
             element: <BillsScreen />,
-            // children: [
-            // ],
+            // children: [],
           },
           {
             path: 'bills/create',

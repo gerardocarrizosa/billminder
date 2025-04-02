@@ -58,7 +58,7 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
         validationSchema={billValidationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values }) => (
           <Form className="space-y-6">
             <div className="space-y-4">
               <FormInput label="Nombre" name="name" />
@@ -80,6 +80,20 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                   className="w-24"
                 />
               </div>
+              {values.type === 'credit_card' && (
+                <div className="flex gap-2">
+                  <FormInput
+                    label="Fecha de corte"
+                    name="cutoffDate"
+                    type="number"
+                  />
+                  <FormInput
+                    label="Fecha límite de pago"
+                    name="paymentDeadline"
+                    type="number"
+                  />
+                </div>
+              )}
               {isEditing && (
                 <FormSelect
                   label="Status"

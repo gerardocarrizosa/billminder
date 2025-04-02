@@ -10,7 +10,11 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Bill } from '@/modules/bills/interfaces/bill.interface';
+import {
+  Bill,
+  BillWithIncludes,
+} from '@/modules/bills/interfaces/bill.interface';
+import { Payment } from '@/modules/bills/interfaces/payment.interface';
 
 class BillService {
   private collectionName = 'Bills';
@@ -30,22 +34,49 @@ class BillService {
     }
   }
 
-  async getAllByUserId(userId: string): Promise<Bill[]> {
+  async getAllByUserId(
+    userId: string,
+    include?: { payments?: boolean }
+  ): Promise<BillWithIncludes[]> {
     try {
       const q = query(
         collection(db, this.collectionName),
         where('userId', '==', userId)
       );
-
       const querySnapshot = await getDocs(q);
-      const bills: Bill[] = [];
-      querySnapshot.forEach((doc) => {
-        bills.push({
-          id: doc.id,
-          ...doc.data(),
-        } as Bill);
-      });
+      const bills: BillWithIncludes[] = [];
 
+      for (const billDoc of querySnapshot.docs) {
+        const billDocData = billDoc.data();
+
+        const billData = {
+          id: billDoc.id,
+          ...billDocData,
+          createdAt: billDocData.createdAt.toDate(),
+          updatedAt: billDocData.updatedAt.toDate(),
+        } as BillWithIncludes;
+
+        if (include?.payments) {
+          const paymentsQuery = query(
+            collection(db, 'Payments'),
+            where('billId', '==', billData.id)
+          );
+          const paymentsSnapshot = await getDocs(paymentsQuery);
+          const payments: Payment[] = paymentsSnapshot.docs.map((doc) => {
+            const docData = doc.data();
+            return {
+              id: doc.id,
+              ...docData,
+              createdAt: docData.createdAt.toDate(),
+              paidAt: docData.paidAt.toDate(),
+            };
+          }) as Payment[];
+
+          billData.payments = payments;
+        }
+
+        bills.push(billData);
+      }
       return bills;
     } catch (error) {
       console.error('Error fetching bills by userId:', error);

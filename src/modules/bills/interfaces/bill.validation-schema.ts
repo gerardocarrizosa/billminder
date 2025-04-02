@@ -13,6 +13,8 @@ export const billValidationSchema = yup.object().shape({
     .mixed<'active' | 'inactive'>()
     .oneOf(['active', 'inactive'])
     .required(),
+  cutoffDate: yup.number().optional(),
+  paymentDeadline: yup.number().optional(),
   createdAt: yup.date().required(),
   updatedAt: yup.date().required(),
 });

@@ -19,9 +19,22 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/modules/common/components/ui/badge';
 
+// enum BillStatusStatus {
+//   paid,
+//   due,
+//   NA,
+// }
+type BillCardStatus = 'paid' | 'due' | 'NA';
+
+interface BillCardData {
+  bill: Bill;
+  status: BillCardStatus;
+}
+
 function BillsScreen() {
   const navigate = useNavigate();
-  const [bills, setBills] = useState<Bill[]>([]);
+  // const [bills, setBills] = useState<BillWithIncludes[]>([]);
+  const [bills, setBills] = useState<BillCardData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
@@ -31,8 +44,50 @@ function BillsScreen() {
       try {
         setLoading(true);
         if (user?.uid) {
-          const userBills = await billService.getAllByUserId(user.id);
-          setBills(userBills);
+          const userBills = await billService.getAllByUserId(user.id, {
+            payments: true,
+          });
+
+          const billsData: BillCardData[] = [];
+          const actualMonth = new Date().getMonth() + 1;
+          const actualYear = new Date().getFullYear();
+
+          for (const bill of userBills) {
+            if (!bill.payments || bill.payments.length === 0) {
+              console.log('no payments!');
+              billsData.push({
+                bill,
+                status: 'NA',
+              });
+              continue;
+            }
+            const billLastPayment = bill.payments[bill.payments.length - 1];
+
+            const billLastPaymentDate = billLastPayment.paidAt;
+            console.log('billLastPaymentDate =>', billLastPaymentDate);
+
+            const actualCutoffDate = new Date(
+              actualYear,
+              actualMonth - 1,
+              bill.cutoffDate
+            );
+            console.log('actualCutoffDate =>', actualCutoffDate);
+
+            if (actualCutoffDate > billLastPaymentDate) {
+              console.log('actualCutoffDate > billLastPayment.paidAt!!!');
+              billsData.push({
+                bill,
+                status: 'due',
+              });
+            } else {
+              billsData.push({
+                bill,
+                status: 'paid',
+              });
+            }
+          }
+
+          setBills(billsData);
         }
       } catch (err) {
         console.error('Error fetching bills:', err);
@@ -54,16 +109,16 @@ function BillsScreen() {
     });
   };
 
-  const getBillTypeIcon = (type: string) => {
+  const getBillTypeIcon = (type: string, color: string) => {
     switch (type) {
       case 'credit_card':
-        return <CreditCardIcon className="h-5 w-5" />;
+        return <CreditCardIcon color={color} className="h-5 w-5" />;
       case 'service':
-        return <LightbulbIcon className="h-5 w-5" />;
+        return <LightbulbIcon color={color} className="h-5 w-5" />;
       case 'subscription':
-        return <RefreshCwIcon className="h-5 w-5" />;
+        return <RefreshCwIcon color={color} className="h-5 w-5" />;
       default:
-        return <CreditCardIcon className="h-5 w-5" />;
+        return <CreditCardIcon color={color} className="h-5 w-5" />;
     }
   };
 
@@ -80,19 +135,17 @@ function BillsScreen() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    if (status === 'active') {
-      return (
-        <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-          Activa
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200">
-          Inactiva
-        </Badge>
-      );
+  const getStatusBadge = (status: BillCardStatus) => {
+    switch (status) {
+      case 'NA':
+        return <Badge className="bg-gray-100 text-gray-800">NA</Badge>;
+      case 'due':
+        return <Badge className="bg-red-100 text-red-800">Pendiente</Badge>;
+      case 'paid':
+        return <Badge className="bg-green-100 text-green-800">Pagado</Badge>;
+
+      default:
+        break;
     }
   };
 
@@ -133,27 +186,28 @@ function BillsScreen() {
           <p className="text-gray-500 mb-6">Total: {bills.length} facturas</p>
 
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {bills.map((bill: Bill) => (
+            {bills.map(({ bill, status }: BillCardData) => (
               <Card
                 key={bill.id}
-                className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer border-0 shadow-sm"
-                onClick={() => navigate(`/bills/${bill.id}`)}
+                style={{ borderColor: bill.color }}
+                className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer shadow-sm"
+                // onClick={() => navigate(`/bills/${bill.id}`)}
               >
                 <CardHeader className="pb-2 pt-4 px-6 flex flex-row justify-between items-center">
                   <div className="flex items-center gap-2">
-                    {getBillTypeIcon(bill.type)}
+                    {getBillTypeIcon(bill.type, bill.color)}
                     <CardTitle className="text-lg font-medium">
                       {bill.name}
                     </CardTitle>
                   </div>
-                  {getStatusBadge(bill.status)}
+                  {getStatusBadge(status)}
                 </CardHeader>
                 <CardContent className="px-6 py-2">
                   <div className="text-sm text-gray-500 mt-1">
                     {getBillTypeLabel(bill.type)}
                   </div>
                 </CardContent>
-                <CardFooter className="px-6 py-4 bg-gray-50 flex justify-between items-center">
+                <CardFooter className="px-6 py-4 flex justify-between items-center">
                   <div className="flex items-center text-xs text-gray-500">
                     <CalendarIcon className="h-3 w-3 mr-1" />
                     {formatDate(bill.createdAt)}
