@@ -1,12 +1,9 @@
-import { useTheme } from '@/modules/common/components/theme-controller';
-import { Button } from '@/modules/common/components/ui/button';
-import { DollarSign, Home, Menu, Moon, Sun, X } from 'lucide-react';
+import { DollarSign, Home, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import ProfileDropdown from '@/modules/home/components/profile-dropdown-menu';
 
 function Layout() {
-  const { setTheme, theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const routes = [
     {
@@ -20,14 +17,6 @@ function Layout() {
       icon: <DollarSign size={20} />,
     },
   ];
-
-  const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -47,14 +36,6 @@ function Layout() {
             </Link>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </Button>
             <ProfileDropdown />
           </div>
         </div>

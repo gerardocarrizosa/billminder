@@ -25,6 +25,7 @@ import PaymentsHistoryTable from '../components/payments-history-table';
 import { createBillAnalyzer } from '../utils/bill-analyzer';
 import { formatCurrency } from '../../common/utils/format-currency';
 import { getStatusBadge } from '../utils/bill-status-badge';
+import Loader from '@/modules/common/components/loader';
 
 const BillDetailsScreen: React.FC = () => {
   const { billId } = useParams();
@@ -51,7 +52,8 @@ const BillDetailsScreen: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        {/* <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div> */}
+        <Loader />
       </div>
     );
   }
@@ -86,20 +88,15 @@ const BillDetailsScreen: React.FC = () => {
   } = analyzer.getAnalysis();
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto">
       <div className="mb-6">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => window.history.back()}
-          className="mb-4"
-        >
-          <ChevronLeft />
-          Regresar
-        </Button>
-
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
           <div className="flex items-center gap-3 mb-3 sm:mb-0">
+            <Link to={'/bills'}>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            </Link>
             <div
               className="w-6 h-6 rounded-full flex-shrink-0"
               style={{ backgroundColor: bill.color }}

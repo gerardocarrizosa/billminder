@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form } from 'formik';
-import { ChevronLeft, Loader } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { Bill } from '../interfaces/bill.interface';
 import { Payment } from '../interfaces/payment.interface';
 import { Button } from '@/modules/common/components/ui/button';
@@ -18,6 +18,7 @@ import paymentService from '@/lib/api/payments.api';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import billService from '@/lib/api/bills.api';
+import Loader from '@/modules/common/components/loader';
 
 interface PaymentFormProps {
   isEditing?: boolean;
@@ -89,7 +90,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
         <div className="flex items-center gap-4 mb-2">
           <Button
             onClick={() => navigate(-1)}
-            variant="ghost"
+            variant="outline"
             size="icon"
             className="h-8 w-8"
           >
