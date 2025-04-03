@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { Bill } from '@/modules/bills/interfaces/bill.interface';
@@ -20,8 +20,6 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
 
   if (!user) return;
 
-  useEffect(() => {}, []);
-
   const today = new Date();
   const initialValues: Omit<Bill, 'id'> = {
     name: '',
@@ -30,6 +28,9 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
     createdAt: today,
     updatedAt: today,
     userId: user.id,
+    color: '',
+    cutoffDate: undefined,
+    paymentDeadline: undefined,
   };
 
   const formInitialValues = isEditing && bill ? bill : initialValues;
@@ -81,16 +82,18 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                 />
               </div>
               {values.type === 'credit_card' && (
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-4 sm:flex-row">
                   <FormInput
                     label="Fecha de corte"
                     name="cutoffDate"
                     type="number"
+                    className="flex-1"
                   />
                   <FormInput
                     label="Fecha límite de pago"
                     name="paymentDeadline"
                     type="number"
+                    className="flex-1"
                   />
                 </div>
               )}

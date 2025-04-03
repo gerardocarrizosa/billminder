@@ -5,7 +5,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -20,8 +22,13 @@ class PaymentService {
   async create(data: Payment): Promise<string> {
     try {
       await paymentSchema.validate(data);
-      const { id, ...dataWithoutId } = data as any;
-      const docRef = await addDoc(this.collection, dataWithoutId);
+      const { id, ...dataWithoutId } = data;
+
+      const docRef = await addDoc(this.collection, {
+        ...dataWithoutId,
+        paidAt: Timestamp.fromDate(dataWithoutId.paidAt),
+        createdAt: Timestamp.fromDate(dataWithoutId.createdAt),
+      });
       return docRef.id;
     } catch (error) {
       console.error('Error creating payment:', error);
@@ -31,10 +38,20 @@ class PaymentService {
 
   async getAllByBillId(billId: string): Promise<Payment[]> {
     try {
-      const q = query(this.collection, where('billId', '==', billId));
+      const q = query(
+        this.collection,
+        where('billId', '==', billId),
+        orderBy('paidAt', 'desc')
+      );
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Payment)
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt.toDate(),
+            paidAt: doc.data().paidAt.toDate(),
+          } as Payment)
       );
     } catch (error) {
       console.error('Error fetching payments by billId:', error);

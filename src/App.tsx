@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import { ThemeProvider } from './modules/common/components/theme-controller';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -10,10 +14,17 @@ import HomeScreen from './modules/home/screens/home-screen';
 import UserProfile from './modules/profile/screens/user-profile';
 import UserProfileData from './modules/profile/components/user-profile-data';
 import UserProfileForm from './modules/profile/components/user-profile.form';
-import BillsScreen from './modules/bills/bills.screen';
+import BillsScreen from './modules/bills/pages/bills.screen';
 import BillForm from './modules/bills/components/bill-form';
+import BillsLayout from './modules/bills/components/bills.layout';
+import BillDetailsScreen from './modules/bills/pages/bill-details.screen';
+import PaymentForm from './modules/bills/components/payment-form';
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to="/home" />,
+  },
   {
     path: '/login',
     element: <LoginScreen />,
@@ -36,13 +47,42 @@ const router = createBrowserRouter([
           },
           {
             path: 'bills',
-            element: <BillsScreen />,
-            // children: [],
+            element: <BillsLayout />,
+            children: [
+              {
+                path: '',
+                element: <BillsScreen />,
+              },
+              {
+                path: 'create',
+                element: <BillForm />,
+              },
+              {
+                path: ':billId',
+                element: <BillDetailsScreen />,
+              },
+              {
+                path: ':billId/payments/new',
+                element: <PaymentForm />,
+              },
+              {
+                path: ':billId/payments/:paymentId',
+                element: <PaymentForm isEditing />,
+              },
+            ],
           },
-          {
-            path: 'bills/create',
-            element: <BillForm />,
-          },
+          // {
+          //   path: 'bills',
+          //   element: <BillsScreen />,
+          // },
+          // {
+          //   path: 'bills/:id',
+          //   element: <div>Hola!</div>,
+          // },
+          // {
+          //   path: 'bills/create',
+          //   element: <BillForm />,
+          // },
           {
             path: 'profile',
             element: <UserProfile />,

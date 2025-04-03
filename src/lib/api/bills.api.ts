@@ -5,6 +5,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
   updateDoc,
   where,
@@ -84,18 +85,41 @@ class BillService {
     }
   }
 
-  async getById(id: string): Promise<Bill | null> {
+  async getById(
+    id: string,
+    include?: { payments?: boolean }
+  ): Promise<BillWithIncludes | null> {
     try {
       const docRef = doc(db, this.collectionName, id);
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        return {
-          id: docSnap.id,
-          ...docSnap.data(),
-        } as Bill;
+      if (!docSnap.exists()) return null;
+
+      const billData: BillWithIncludes = {
+        id: docSnap.id,
+        ...docSnap.data(),
+        createdAt: docSnap.data().createdAt.toDate(),
+        updatedAt: docSnap.data().updatedAt.toDate(),
+      } as Bill;
+
+      if (include?.payments) {
+        const paymentsQuery = query(
+          collection(db, 'Payments'),
+          where('billId', '==', billData.id),
+          orderBy('paidAt', 'desc')
+        );
+        const paymentsSnapshot = await getDocs(paymentsQuery);
+        const payments: Payment[] = paymentsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt.toDate(),
+          paidAt: doc.data().paidAt.toDate(),
+        })) as Payment[];
+
+        billData.payments = payments; // Attach payments to bill
       }
-      return null;
+
+      return billData;
     } catch (error) {
       console.error('Error fetching bill:', error);
       throw error;

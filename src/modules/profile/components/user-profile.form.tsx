@@ -92,7 +92,7 @@ const UserProfileForm = () => {
                 <FormInput label="Nombre" name="name" />
                 <FormInput label="Correo electrónico" name="email" />
                 <FormInput label="Telefono" name="phoneNumber" />
-                <FormSelect<string>
+                <FormSelect
                   name="gender"
                   label="Género"
                   options={[
