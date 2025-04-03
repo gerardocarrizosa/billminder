@@ -61,11 +61,14 @@ export class BillAnalyzer {
     // this.bill.cutoffDate
   }
 
-  getPaymentsStatus() {
+  /**
+   * Check if a bill is due based on last payment made.
+   */
+  isBillDue() {
     if (!this.bill.payments || this.bill.payments.length === 0) return null;
 
-    const billLastPayment = this.bill.payments[this.bill.payments?.length - 1];
-    const billLastPaymentDate = billLastPayment.paidAt;
+    const lastPayment = this.bill.payments[0];
+    const lastPaymentDate = lastPayment.paidAt;
 
     const actualMonth = new Date().getMonth() + 1;
     const actualYear = new Date().getFullYear();
@@ -76,7 +79,7 @@ export class BillAnalyzer {
       this.bill.cutoffDate
     );
 
-    if (actualCutoffDate > billLastPaymentDate) {
+    if (lastPaymentDate <= actualCutoffDate) {
       return true;
     } else {
       return false;
@@ -118,6 +121,7 @@ export class BillAnalyzer {
       totalPaid: this.getTotalPaid(),
       averagePayment: this.getAveragePayment(),
       nextPaymentDue,
+      isBillDue: this.isBillDue(),
       isPaymentDueSoon: this.isPaymentDueSoon(),
       isPaymentOverdue: this.isPaymentOverdue(),
       totalPayments: this.bill.payments?.length || 0,

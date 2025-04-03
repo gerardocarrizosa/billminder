@@ -29,8 +29,6 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
     updatedAt: today,
     userId: user.id,
     color: '',
-    cutoffDate: undefined,
-    paymentDeadline: undefined,
   };
 
   const formInitialValues = isEditing && bill ? bill : initialValues;
@@ -82,21 +80,19 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                 />
               </div>
               {values.type === 'credit_card' && (
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <FormInput
-                    label="Fecha de corte"
-                    name="cutoffDate"
-                    type="number"
-                    className="flex-1"
-                  />
-                  <FormInput
-                    label="Fecha límite de pago"
-                    name="paymentDeadline"
-                    type="number"
-                    className="flex-1"
-                  />
-                </div>
+                <FormInput
+                  label="Fecha de corte"
+                  name="cutoffDate"
+                  type="number"
+                  className="flex-1"
+                />
               )}
+              <FormInput
+                label="Fecha límite de pago"
+                name="paymentDeadline"
+                type="number"
+                className="flex-1"
+              />
               {isEditing && (
                 <FormSelect
                   label="Status"

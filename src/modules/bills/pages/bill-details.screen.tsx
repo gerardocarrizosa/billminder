@@ -24,7 +24,7 @@ import billService from '@/lib/api/bills.api';
 import PaymentsHistoryTable from '../components/payments-history-table';
 import { createBillAnalyzer } from '../utils/bill-analyzer';
 import { formatCurrency } from '../../common/utils/format-currency';
-// import paymentService from '@/lib/api/payments.api';
+import { getStatusBadge } from '../utils/bill-status-badge';
 
 const BillDetailsScreen: React.FC = () => {
   const { billId } = useParams();
@@ -36,9 +36,6 @@ const BillDetailsScreen: React.FC = () => {
     setLoading(true);
     try {
       const billData = await billService.getById(billId, { payments: true });
-      // if (!billData) return;
-      // const billPayments = await paymentService.getAllByBillId(billData?.id!);
-      // billData.payments = billPayments;
       setBill(billData);
     } catch (error) {
       console.error(`Error fetching bill with ID ${billId}:`, error);
@@ -85,6 +82,7 @@ const BillDetailsScreen: React.FC = () => {
     nextPaymentDue,
     isPaymentDueSoon,
     isPaymentOverdue,
+    isBillDue,
   } = analyzer.getAnalysis();
 
   return (
@@ -183,71 +181,86 @@ const BillDetailsScreen: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {nextPaymentDue ? (
-              <>
-                <div className="mb-4">
-                  <h3 className="text-base font-medium mb-1">Próximo pago</h3>
-                  <div className="flex items-center gap-2">
-                    {isPaymentOverdue ? (
-                      <AlertCircle className="h-5 w-5 text-red-500" />
-                    ) : isPaymentDueSoon ? (
-                      <AlertCircle className="h-5 w-5 text-amber-500" />
-                    ) : (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                    )}
-                    <p
-                      className={`text-lg font-semibold ${
-                        isPaymentOverdue
-                          ? 'text-red-500'
-                          : isPaymentDueSoon
-                          ? 'text-amber-500'
-                          : 'text-green-500'
-                      }`}
-                    >
-                      {formatDate(nextPaymentDue)}
-                    </p>
-                  </div>
-                  {isPaymentOverdue && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Payment overdue!
-                    </p>
-                  )}
-                  {isPaymentDueSoon && !isPaymentOverdue && (
-                    <p className="text-amber-500 text-sm mt-1">
-                      Payment due soon!
-                    </p>
-                  )}
-                </div>
+            <div>
+              {/* status based on the last payment */}
+              <div className="flex justify-between mb-4">
+                <h3 className="text-base font-medium mb-1">Próximo pago</h3>
+                {isBillDue ? (
+                  <div>{getStatusBadge('due')}</div>
+                ) : (
+                  <div>{getStatusBadge('paid')}</div>
+                )}
+              </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">
-                      Último pago
-                    </dt>
-                    <dd className="text-base">
-                      {bill.payments && bill.payments.length > 0 ? (
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">
-                            {formatCurrency(bill.payments[0].amount)}
-                          </span>
-                          <span className="text-gray-500">
-                            el {formatDate(bill.payments[0].paidAt)}
-                          </span>
-                        </div>
+              {/* payment deadline date */}
+              {nextPaymentDue ? (
+                <>
+                  <div className="mb-4">
+                    <h3 className="text-base font-medium mb-1">
+                      Fecha limite de pago
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      {isPaymentOverdue ? (
+                        <AlertCircle className="h-5 w-5 text-red-500" />
+                      ) : isPaymentDueSoon ? (
+                        <AlertCircle className="h-5 w-5 text-amber-500" />
                       ) : (
-                        <span className="text-gray-500">
-                          No payments recorded
-                        </span>
+                        <CheckCircle className="h-5 w-5 text-green-500" />
                       )}
-                    </dd>
+                      <p
+                        className={`text-lg font-semibold ${
+                          isPaymentOverdue
+                            ? 'text-red-500'
+                            : isPaymentDueSoon
+                            ? 'text-amber-500'
+                            : 'text-green-500'
+                        }`}
+                      >
+                        {formatDate(nextPaymentDue)}
+                      </p>
+                    </div>
+                    {isPaymentOverdue && (
+                      <p className="text-red-500 text-sm mt-1">
+                        ¡Pago vencido!
+                      </p>
+                    )}
+                    {isPaymentDueSoon && !isPaymentOverdue && (
+                      <p className="text-amber-500 text-sm mt-1">
+                        ¡Pago próximo a vencer!
+                      </p>
+                    )}
                   </div>
-                </div>
-              </>
-            ) : (
-              <p className="text-gray-500">
-                No payment deadline set for this bill.
-              </p>
-            )}
+
+                  <div className="space-y-4">
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">
+                        Último pago
+                      </dt>
+                      <dd className="text-base">
+                        {bill.payments && bill.payments.length > 0 ? (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">
+                              {formatCurrency(bill.payments[0].amount)}
+                            </span>
+                            <span className="text-gray-500">
+                              el {formatDate(bill.payments[0].paidAt)}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">
+                            No hay pagos registrados
+                          </span>
+                        )}
+                      </dd>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p className="text-gray-500">
+                  Fecha límite de pago no configurada
+                </p>
+              )}
+            </div>
           </CardContent>
         </Card>
 

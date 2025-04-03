@@ -27,15 +27,15 @@ function BillsScreen() {
 
           for (const bill of userBills) {
             const analyzer = createBillAnalyzer(bill);
-            const valid = analyzer.getPaymentsStatus();
-            if (!valid) {
+            const isDue = analyzer.isBillDue();
+            if (isDue === null) {
               billsData.push({
                 bill,
                 status: 'NA',
               });
               continue;
             }
-            if (valid) {
+            if (isDue) {
               billsData.push({
                 bill,
                 status: 'due',

@@ -60,7 +60,8 @@ class BillService {
         if (include?.payments) {
           const paymentsQuery = query(
             collection(db, 'Payments'),
-            where('billId', '==', billData.id)
+            where('billId', '==', billData.id),
+            orderBy('paidAt', 'desc')
           );
           const paymentsSnapshot = await getDocs(paymentsQuery);
           const payments: Payment[] = paymentsSnapshot.docs.map((doc) => {

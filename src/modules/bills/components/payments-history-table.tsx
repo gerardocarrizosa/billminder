@@ -41,9 +41,9 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
           <tr>
             <th className="px-4 py-3 text-left font-medium">Cantidad</th>
             <th className="px-4 py-3 text-left font-medium">Fecha de pago</th>
-            <th className="px-4 py-3 text-left font-medium">
+            {/* <th className="px-4 py-3 text-left font-medium">
               Fecha de creación
-            </th>
+            </th> */}
             {/* <th className="px-4 py-3 text-right font-medium">Actions</th> */}
           </tr>
         </thead>
@@ -59,7 +59,7 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
                 </div>
               </td>
               <td className="px-4 py-3">{formatDate(payment.paidAt)}</td>
-              <td className="px-4 py-3">{formatDate(payment.createdAt)}</td>
+              {/* <td className="px-4 py-3">{formatDate(payment.createdAt)}</td> */}
               {/* <td className="px-4 py-3 text-right">
                 <Button
                   variant="ghost"
