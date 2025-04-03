@@ -3,8 +3,10 @@ export interface User {
   name: string;
   email: string;
   uid: string;
-  gender?: 'male' | 'female' | 'other';
+  gender?: UserGender;
   dateOfBirth?: string;
   phoneNumber?: string;
   profilePhoto?: string;
 }
+
+export type UserGender = 'male' | 'female' | 'other';

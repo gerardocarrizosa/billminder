@@ -15,11 +15,11 @@ const UserProfileScreen: React.FC = () => {
   if (!fb_user) return null;
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-3xl">
+    <div className="container mx-auto py-10 max-w-3xl">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Profile</CardTitle>
-          <CardDescription>Manage your personal information</CardDescription>
+          <CardTitle className="text-2xl font-bold">Mi perfil</CardTitle>
+          <CardDescription>Gestiona tu información personal</CardDescription>
         </CardHeader>
 
         <CardContent>

@@ -19,12 +19,13 @@ import { useNavigate } from 'react-router-dom';
 
 const UserProfileForm = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   if (!user) return null;
 
   const handleSubmit = async (values: User) => {
     await userService.updateUser(user.id, values);
-    toast.success('Profile updated');
+    toast.success('Perfil actualizado');
+    refreshProfile();
     navigate('/profile');
   };
 
@@ -82,7 +83,7 @@ const UserProfileForm = () => {
                 }}
               >
                 <Camera size={16} />
-                Change Photo
+                Cambiar foto
               </Button>
             </div>
 
@@ -96,11 +97,11 @@ const UserProfileForm = () => {
                   name="gender"
                   label="Género"
                   options={[
-                    { label: 'Male', value: 'male' },
-                    { label: 'Female', value: 'female' },
-                    { label: 'Other', value: 'other' },
+                    { label: 'Masculino', value: 'male' },
+                    { label: 'Femenino', value: 'female' },
+                    { label: 'Otro', value: 'other' },
                   ]}
-                  placeholder="Select gender"
+                  placeholder="Selecciona un género"
                 />
                 <FormDatePicker
                   name="dateOfBirth"
@@ -118,13 +119,7 @@ const UserProfileForm = () => {
               className="flex items-center gap-2"
             >
               <X size={16} />
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={() => console.log('values =>', values)}
-            >
-              vals
+              Cancelar
             </Button>
             <Button
               type="submit"
@@ -132,7 +127,7 @@ const UserProfileForm = () => {
               className="flex items-center gap-2"
             >
               <Check size={16} />
-              Save Changes
+              Guardar cambios
             </Button>
           </CardFooter>
         </Form>

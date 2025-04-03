@@ -24,6 +24,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<User | null>;
   googleSignIn: () => Promise<User | null>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => null,
   googleSignIn: async () => null,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -62,6 +64,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => unsubscribe();
   }, []);
+
+  const refreshProfile = async () => {
+    try {
+      if (!user) return;
+      const firestoreUser = await userService.getUserByUid(user.uid);
+      setUser(firestoreUser);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setUser(null);
+    }
+  };
 
   const signup = async (
     email: string,
@@ -192,6 +205,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         googleSignIn,
         signOut,
+        refreshProfile,
       }}
     >
       {children}
