@@ -10,7 +10,6 @@ import {
 import { User, UserCircle, LogOut, Sun, Moon } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 import toast from 'react-hot-toast';
-import { Button } from '@/modules/common/components/ui/button';
 import { useTheme } from '@/modules/common/components/theme-controller';
 
 const ProfileDropdown = () => {
