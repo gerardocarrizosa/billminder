@@ -19,6 +19,7 @@ import BillForm from './modules/bills/components/bill-form';
 import BillsLayout from './modules/bills/components/bills.layout';
 import BillDetailsScreen from './modules/bills/pages/bill-details.screen';
 import PaymentForm from './modules/bills/components/payment-form';
+import { MonthlyBudgetLayout } from './modules/monthly-budget/pages/monthly-budget-layout';
 
 const router = createBrowserRouter([
   {
@@ -71,18 +72,11 @@ const router = createBrowserRouter([
               },
             ],
           },
-          // {
-          //   path: 'bills',
-          //   element: <BillsScreen />,
-          // },
-          // {
-          //   path: 'bills/:id',
-          //   element: <div>Hola!</div>,
-          // },
-          // {
-          //   path: 'bills/create',
-          //   element: <BillForm />,
-          // },
+          {
+            path: 'budget',
+            element: <MonthlyBudgetLayout />,
+            children: [],
+          },
           {
             path: 'profile',
             element: <UserProfile />,
@@ -102,7 +96,18 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
+// {
+//   path: 'bills',
+//   element: <BillsScreen />,
+// },
+// {
+//   path: 'bills/:id',
+//   element: <div>Hola!</div>,
+// },
+// {
+//   path: 'bills/create',
+//   element: <BillForm />,
+// },
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

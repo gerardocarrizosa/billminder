@@ -1,4 +1,4 @@
-import { DollarSign, Home, Menu, X } from 'lucide-react';
+import { DollarSign, Home, Menu, Notebook, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import ProfileDropdown from '@/modules/home/components/profile-dropdown-menu';
@@ -15,6 +15,11 @@ function Layout() {
       path: 'bills',
       name: 'Bills',
       icon: <DollarSign size={20} />,
+    },
+    {
+      path: 'budget',
+      name: 'Monthly budget',
+      icon: <Notebook size={20} />,
     },
   ];
 
