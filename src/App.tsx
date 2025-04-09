@@ -21,7 +21,6 @@ import BillDetailsScreen from './modules/bills/pages/bill-details.screen';
 import PaymentForm from './modules/bills/components/payment-form';
 import { MonthlyBudgetLayout } from './modules/monthly-budget/pages/monthly-budget-layout';
 import MonthlyBudgetMainPage from './modules/monthly-budget/pages/monthly-budget-main.page';
-import ExpensesLayout from './modules/monthly-budget/pages/expenses.layout';
 import AddExpensePage from './modules/monthly-budget/pages/add-expense.page';
 
 const router = createBrowserRouter([
