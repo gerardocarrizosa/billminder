@@ -9,10 +9,13 @@ import {
   updateDoc,
   where,
   Timestamp,
+  orderBy,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { categorySchema } from '@/modules/bills/interfaces/bill.validation-schema';
-import { Category } from '@/modules/bills/interfaces/bill.interface';
+import {
+  Category,
+  categorySchema,
+} from '@/modules/monthly-budget/interfaces/category.interface';
 
 class CategoriesService {
   private collectionName = 'Categories';
@@ -39,7 +42,8 @@ class CategoriesService {
 
   async getAll(): Promise<Category[]> {
     try {
-      const querySnapshot = await getDocs(this.collection);
+      const q = query(this.collection, orderBy('name', 'asc'));
+      const querySnapshot = await getDocs(q);
 
       const categories: Category[] = [];
       querySnapshot.forEach((doc) => {
@@ -47,6 +51,7 @@ class CategoriesService {
         categories.push({
           id: doc.id,
           name: data.name,
+          color: data.color,
           createdAt: data.createdAt.toDate(), // Convert Timestamp back to Date
         });
       });
@@ -68,6 +73,7 @@ class CategoriesService {
         return {
           id: docSnap.id,
           name: data.name,
+          color: data.color,
           createdAt: data.createdAt.toDate(), // Convert Timestamp back to Date
         };
       }
@@ -93,6 +99,7 @@ class CategoriesService {
         categories.push({
           id: doc.id,
           name: data.name,
+          color: data.color,
           createdAt: data.createdAt.toDate(), // Convert Timestamp back to Date
         });
       });

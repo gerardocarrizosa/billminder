@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Payment } from '@/modules/bills/interfaces/payment.interface';
-import { paymentSchema } from '@/modules/bills/interfaces/payment.validation-schema';
+import { handleFirebaseDate } from '@/modules/common/utils/handle-firebase-date';
 
 class PaymentService {
   private collectionName = 'Payments';
@@ -21,13 +21,15 @@ class PaymentService {
 
   async create(data: Payment): Promise<string> {
     try {
-      await paymentSchema.validate(data);
       const { id, ...dataWithoutId } = data;
+
+      const fb_paidAtDate = handleFirebaseDate(dataWithoutId.paidAt);
+      const fb_createdAtDate = handleFirebaseDate(dataWithoutId.createdAt);
 
       const docRef = await addDoc(this.collection, {
         ...dataWithoutId,
-        paidAt: Timestamp.fromDate(dataWithoutId.paidAt),
-        createdAt: Timestamp.fromDate(dataWithoutId.createdAt),
+        paidAt: Timestamp.fromDate(fb_paidAtDate),
+        createdAt: Timestamp.fromDate(fb_createdAtDate),
       });
       return docRef.id;
     } catch (error) {

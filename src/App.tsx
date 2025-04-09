@@ -20,6 +20,9 @@ import BillsLayout from './modules/bills/components/bills.layout';
 import BillDetailsScreen from './modules/bills/pages/bill-details.screen';
 import PaymentForm from './modules/bills/components/payment-form';
 import { MonthlyBudgetLayout } from './modules/monthly-budget/pages/monthly-budget-layout';
+import MonthlyBudgetMainPage from './modules/monthly-budget/pages/monthly-budget-main.page';
+import ExpensesLayout from './modules/monthly-budget/pages/expenses.layout';
+import AddExpensePage from './modules/monthly-budget/pages/add-expense.page';
 
 const router = createBrowserRouter([
   {
@@ -75,7 +78,20 @@ const router = createBrowserRouter([
           {
             path: 'budget',
             element: <MonthlyBudgetLayout />,
-            children: [],
+            children: [
+              {
+                path: '',
+                element: <MonthlyBudgetMainPage />,
+              },
+              {
+                path: 'add-expense',
+                element: <AddExpensePage />,
+              },
+              {
+                path: 'expense:expenseId',
+                element: <>View Expense Screen!</>,
+              },
+            ],
           },
           {
             path: 'profile',

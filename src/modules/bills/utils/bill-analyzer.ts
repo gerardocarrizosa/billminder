@@ -58,7 +58,6 @@ export class BillAnalyzer {
       nextPaymentMonth,
       this.bill.paymentDeadline
     );
-    // this.bill.cutoffDate
   }
 
   /**
@@ -73,16 +72,32 @@ export class BillAnalyzer {
     const actualMonth = new Date().getMonth() + 1;
     const actualYear = new Date().getFullYear();
 
-    const actualCutoffDate = new Date(
-      actualYear,
-      actualMonth - 1,
-      this.bill.cutoffDate
-    );
+    switch (this.bill.type) {
+      case 'credit_card': {
+        const actualCutoffDate = new Date(
+          actualYear,
+          actualMonth - 1,
+          this.bill.cutoffDate
+        );
 
-    if (lastPaymentDate <= actualCutoffDate) {
-      return true;
-    } else {
-      return false;
+        if (lastPaymentDate <= actualCutoffDate) return true;
+        return false;
+      }
+
+      case 'service':
+      case 'subscription': {
+        const actualPaymentDeadline = new Date(
+          actualYear,
+          actualMonth - 1,
+          this.bill.paymentDeadline
+        );
+
+        if (lastPaymentDate <= actualPaymentDeadline) return true;
+        return false;
+      }
+
+      default:
+        break;
     }
   }
 

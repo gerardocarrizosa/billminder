@@ -18,9 +18,3 @@ export const billValidationSchema = yup.object().shape({
   createdAt: yup.date().required(),
   updatedAt: yup.date().required(),
 });
-
-export const categorySchema = yup.object().shape({
-  id: yup.string().optional(),
-  name: yup.string().required('Category name is required'),
-  createdAt: yup.date().default(() => new Date()),
-});

@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { billValidationSchema, categorySchema } from './bill.validation-schema';
+import { billValidationSchema } from './bill.validation-schema';
 import { Payment } from './payment.interface';
 
 export type Bill = yup.InferType<typeof billValidationSchema>;
@@ -12,16 +12,6 @@ export interface BillCardData {
   bill: Bill;
   status: BillCardStatus;
 }
-
-export type Category = yup.InferType<typeof categorySchema>;
-
-// export interface Expense {
-//   name: string;
-//   ammount: number;
-//   categoryId: string;
-//   subcategoryId: string;
-//   createdAt: Date;
-// }
 
 // export interface Category {
 //   name: string;

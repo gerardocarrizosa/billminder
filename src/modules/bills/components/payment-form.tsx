@@ -68,12 +68,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
         await paymentService.update(payment.id, values);
         toast.success('Pago actualizado con éxito');
       } else {
-        const paidAtDate = new Date(values.paidAt);
-        const paidAtDateDay = paidAtDate.getDate();
-        paidAtDate.setDate(paidAtDateDay + 1);
         await paymentService.create({
           ...values,
-          paidAt: paidAtDate,
+          // paidAt: paidAtDate,
         } as Payment);
         toast.success('Pago registrado con éxito');
       }

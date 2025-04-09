@@ -8,10 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { Badge } from './ui/badge';
 
 interface Option {
   label: string;
   value: string;
+  color?: string;
 }
 
 interface FormSelectProps {
@@ -21,6 +23,7 @@ interface FormSelectProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  optionBadge?: boolean;
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
@@ -30,11 +33,11 @@ const FormSelect: React.FC<FormSelectProps> = ({
   placeholder = 'Select an option',
   disabled = false,
   className,
+  optionBadge,
 }) => {
   const [field, meta, helpers] = useField(name);
 
   return (
-    // <div className="mb-4">
     <div className={`mb-4 ${className}`}>
       <Label htmlFor={name} className="block text-sm font-medium mb-1">
         {label}
@@ -55,6 +58,9 @@ const FormSelect: React.FC<FormSelectProps> = ({
         <SelectContent>
           {options.map((opt) => (
             <SelectItem key={opt.value} value={opt.value}>
+              {optionBadge && (
+                <Badge style={{ backgroundColor: opt.color }}></Badge>
+              )}
               {opt.label}
             </SelectItem>
           ))}
