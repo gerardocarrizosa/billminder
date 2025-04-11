@@ -24,7 +24,7 @@ function HomeScreen() {
         <CardContent className="text-center">
           <p className="text-muted-foreground">
             Estamos trabajando para mejorar esta página. Mientras tanto, puedes
-            administrar tus facturas haciendo clic en el botón de abajo.
+            administrar tus gastos haciendo clic en el botón de abajo.
           </p>
         </CardContent>
         <CardFooter className="flex justify-center">
@@ -32,7 +32,7 @@ function HomeScreen() {
             onClick={() => navigate('/bills')}
             className="flex items-center gap-2"
           >
-            Ir a Facturas
+            Ir a gastos
             <MoveRight size={16} />
           </Button>
         </CardFooter>

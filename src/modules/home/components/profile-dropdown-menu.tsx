@@ -19,7 +19,6 @@ const ProfileDropdown = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      toast.success('Signed out');
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);

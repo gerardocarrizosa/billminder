@@ -23,7 +23,7 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">
-          No hay historial disponible para esta factura.
+          No hay historial disponible para este gasto.
         </p>
         <Button variant="outline" className="mt-4" onClick={() => {}}>
           Agregar primer pago

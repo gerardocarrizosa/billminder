@@ -14,6 +14,8 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronLeft,
+  Edit,
+  Plus,
 } from 'lucide-react';
 import { formatDate } from '../../common/utils/format-date';
 import { Link, useParams } from 'react-router-dom';
@@ -63,9 +65,9 @@ const BillDetailsScreen: React.FC = () => {
       <div className="container mx-auto py-6">
         <Card>
           <CardHeader>
-            <CardTitle>Factura no encontrada</CardTitle>
+            <CardTitle>Gasto no encontrado</CardTitle>
             <CardDescription>
-              Parece que esta factura no existe 🤔.
+              Parece que este gasto no existe 🤔.
             </CardDescription>
           </CardHeader>
           <CardFooter>
@@ -89,9 +91,9 @@ const BillDetailsScreen: React.FC = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-          <div className="flex items-center gap-3 mb-3 sm:mb-0">
+          <div className="flex items-center gap-3 mb-4 sm:mb-0">
             <Link to={'/bills'}>
               <Button variant="outline" size="icon" className="h-8 w-8">
                 <ChevronLeft className="h-4 w-4" />
@@ -106,11 +108,13 @@ const BillDetailsScreen: React.FC = () => {
               {bill.status}
             </Badge> */}
           </div>
-
           <div className="flex gap-2">
-            <Button variant="outline">Editar</Button>
-            <Link to="payments/create">
-              <Button variant="default">Agregar pago</Button>
+            <Link to="payments/create" className="w-full">
+              {/* <Button variant="outline" className="w-full"> */}
+              <Button className="w-full">
+                <Plus />
+                Agregar pago
+              </Button>
             </Link>
           </div>
         </div>
@@ -120,9 +124,16 @@ const BillDetailsScreen: React.FC = () => {
         {/* Bill Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {getBillTypeIcon(bill.type)}
-              <span>Informacion de la factura</span>
+            <CardTitle className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                {getBillTypeIcon(bill.type)}
+                <span>Información del gasto</span>
+              </div>
+              <div>
+                <Button variant="ghost">
+                  <Edit />
+                </Button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>

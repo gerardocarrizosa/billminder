@@ -188,7 +188,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await firebaseSignOut(auth);
       setUser(null);
       setFirebaseUser(null);
-      toast.success('Signed out');
     } catch (error) {
       console.error('Signout error:', error);
       toast.error('Failed to sign out');

@@ -15,7 +15,7 @@ const BillCard: React.FC<BillCardData> = ({ bill, status }) => {
   return (
     <Card
       key={bill.id}
-      style={{ borderColor: bill.color }}
+      style={{ borderColor: bill.color, backgroundColor: `${bill.color}30` }}
       className="overflow-hidden transition-all duration-200 hover:shadow-md cursor-pointer shadow-sm"
     >
       <CardHeader className="flex flex-row justify-between items-center">

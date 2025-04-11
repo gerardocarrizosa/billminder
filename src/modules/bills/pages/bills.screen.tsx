@@ -92,22 +92,22 @@ function BillsScreen() {
   return (
     <div className="container mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Mis facturas</h1>
+        <h1 className="text-3xl font-bold">Mis gastos</h1>
         <Link to="create">
-          <Button>Nueva factura</Button>
+          <Button>Nuevo gasto</Button>
         </Link>
       </div>
 
       {bills.length === 0 ? (
         <div className="text-center py-16 rounded-lg shadow-sm">
-          <p className="text-gray-500 mb-6">No tienes facturas registradas.</p>
+          <p className="text-gray-500 mb-6">No tienes gastos registrados.</p>
           <Link to="create">
-            <Button>Nueva factura</Button>
+            <Button>Nuevo gasto</Button>
           </Link>
         </div>
       ) : (
         <div>
-          <p className="text-gray-500 mb-6">Total: {bills.length} facturas</p>
+          <p className="text-gray-500 mb-6">Total: {bills.length} gastos</p>
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {bills.map(({ bill, status }) => (
               <Link key={bill.id} to={bill.id!}>

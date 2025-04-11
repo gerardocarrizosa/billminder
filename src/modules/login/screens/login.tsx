@@ -48,7 +48,7 @@ const LoginScreen = () => {
     try {
       setAuthError(null);
       await googleSignIn();
-      navigate('/profile');
+      navigate('/home');
     } catch (error: any) {
       console.error('Google sign-in error:', error);
       setAuthError(getErrorMessage(error.code));
@@ -60,10 +60,10 @@ const LoginScreen = () => {
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Login
+            Iniciar sesión
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Escribe tus credenciales para entrar a tu cuenta
           </CardDescription>
         </CardHeader>
 
@@ -83,7 +83,7 @@ const LoginScreen = () => {
             {({ isSubmitting, errors, touched }) => (
               <Form className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">Correo electrónico</Label>
                   <div className="relative">
                     <Field name="email">
                       {({ field }: any) => (
@@ -97,7 +97,7 @@ const LoginScreen = () => {
                                 ? 'border-red-500'
                                 : ''
                             }`}
-                            placeholder="name@example.com"
+                            placeholder="tu@correo.com"
                             {...field}
                           />
                         </div>
@@ -113,12 +113,12 @@ const LoginScreen = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Contraseña</Label>
                     <Link
                       to="/forgot-password"
                       className="text-sm text-blue-600 hover:text-blue-800"
                     >
-                      Forgot password?
+                      ¿Olvidaste tu contraseña?
                     </Link>
                   </div>
                   <div className="relative">
@@ -154,7 +154,7 @@ const LoginScreen = () => {
                   disabled={isSubmitting}
                 >
                   <LogIn className="mr-2 h-4 w-4" />
-                  {isSubmitting ? 'Logging in...' : 'Login'}
+                  {isSubmitting ? 'Entrando...' : 'Entrar'}
                 </Button>
               </Form>
             )}
@@ -166,7 +166,7 @@ const LoginScreen = () => {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                o continúa con
               </span>
             </div>
           </div>
@@ -195,18 +195,18 @@ const LoginScreen = () => {
                 fill="#EA4335"
               />
             </svg>
-            Sign in with Google
+            Entrar con Google
           </Button>
         </CardContent>
 
         <CardFooter className="flex justify-center">
           <p className="text-sm text-center text-gray-600">
-            Don't have an account?{' '}
+            ¿Aún no tienes cuenta?{' '}
             <Link
               to="/signup"
               className="text-blue-600 hover:text-blue-800 font-medium"
             >
-              Sign up
+              Regístrate
             </Link>
           </p>
         </CardFooter>

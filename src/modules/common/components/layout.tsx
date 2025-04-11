@@ -8,17 +8,17 @@ function Layout() {
   const routes = [
     {
       path: 'home',
-      name: 'Home',
+      name: 'Inicio',
       icon: <Home size={20} />,
     },
     {
       path: 'bills',
-      name: 'Bills',
+      name: 'Lo de siempre',
       icon: <DollarSign size={20} />,
     },
     {
       path: 'budget',
-      name: 'Monthly budget',
+      name: 'Presupuesto mensual',
       icon: <Notebook size={20} />,
     },
   ];

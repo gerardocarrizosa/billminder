@@ -68,18 +68,24 @@ export class BillAnalyzer {
 
     const lastPayment = this.bill.payments[0];
     const lastPaymentDate = lastPayment.paidAt;
-
-    const actualMonth = new Date().getMonth() + 1;
+    let actualMonth = new Date().getMonth(); // don't add 1 since you need the past month;
     const actualYear = new Date().getFullYear();
 
     switch (this.bill.type) {
       case 'credit_card': {
+        if (
+          this.bill.cutoffDate &&
+          this.bill.paymentDeadline &&
+          this.bill.cutoffDate >= this.bill.paymentDeadline
+        ) {
+          actualMonth -= 1;
+        }
+
         const actualCutoffDate = new Date(
           actualYear,
-          actualMonth - 1,
+          actualMonth,
           this.bill.cutoffDate
         );
-
         if (lastPaymentDate <= actualCutoffDate) return true;
         return false;
       }
@@ -88,7 +94,7 @@ export class BillAnalyzer {
       case 'subscription': {
         const actualPaymentDeadline = new Date(
           actualYear,
-          actualMonth - 1,
+          actualMonth,
           this.bill.paymentDeadline
         );
 
