@@ -66,7 +66,12 @@ class PaymentService {
       const docRef = doc(db, this.collectionName, id);
       const docSnap = await getDoc(docRef);
       return docSnap.exists()
-        ? ({ id: docSnap.id, ...docSnap.data() } as Payment)
+        ? ({
+            id: docSnap.id,
+            ...docSnap.data(),
+            paidAt: docSnap.data().paidAt.toDate(),
+            createdAt: docSnap.data().createdAt.toDate(),
+          } as Payment)
         : null;
     } catch (error) {
       console.error('Error fetching payment:', error);

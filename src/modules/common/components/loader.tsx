@@ -1,7 +1,11 @@
-function Loader() {
-  // <div className="flex justify-center items-center h-screen">
-  //   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-  // </div>
+function Loader({ centered }: { centered?: boolean }) {
+  if (centered)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-spinner loading-md"></span>;
+      </div>
+    );
+
   return <span className="loading loading-spinner loading-md"></span>;
 }
 

@@ -13,8 +13,13 @@ function Layout() {
     },
     {
       path: 'bills',
-      name: 'Lo de siempre',
+      name: 'Cargos',
       icon: <DollarSign size={20} />,
+    },
+    {
+      path: 'expenses',
+      name: 'Gastos',
+      icon: <Notebook size={20} />,
     },
     {
       path: 'budget',

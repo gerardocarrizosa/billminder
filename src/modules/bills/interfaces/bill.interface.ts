@@ -12,12 +12,3 @@ export interface BillCardData {
   bill: Bill;
   status: BillCardStatus;
 }
-
-// export interface Category {
-//   name: string;
-//   subcategories: Subcategory[];
-// }
-
-// export interface Subcategory {
-//   name: string;
-// }

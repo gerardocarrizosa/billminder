@@ -22,6 +22,10 @@ const FormInput: React.FC<FormInputProps> = ({
 }) => {
   const [field, meta] = useField(name);
 
+  if (type === 'date') {
+    field.value = field.value.toISOString().split('T')[0];
+  }
+
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name}>{label}</Label>

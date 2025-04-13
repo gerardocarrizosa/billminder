@@ -28,12 +28,7 @@ const MonthlyBudgetMainPage = () => {
   let expensesTotal = 0;
   expenses.forEach((e) => (expensesTotal += e.amount));
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
+  if (loading) return <Loader centered />;
 
   return (
     <div>

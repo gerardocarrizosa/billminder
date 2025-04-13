@@ -7,6 +7,7 @@ import { BillCardData, BillCardStatus } from '../interfaces/bill.interface';
 import BillCard from '../components/bill-card';
 import { createBillAnalyzer } from '../utils/bill-analyzer';
 import Loader from '@/modules/common/components/loader';
+import { Plus } from 'lucide-react';
 
 function BillsScreen() {
   const [bills, setBills] = useState<BillCardData[]>([]);
@@ -72,11 +73,7 @@ function BillsScreen() {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
+    return <Loader centered />;
   }
 
   if (error) {
@@ -91,10 +88,12 @@ function BillsScreen() {
 
   return (
     <div className="container mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Mis gastos</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-bold">Recordatorios</h1>
         <Link to="create">
-          <Button>Nuevo gasto</Button>
+          <Button>
+            <Plus />
+          </Button>
         </Link>
       </div>
 
@@ -107,7 +106,6 @@ function BillsScreen() {
         </div>
       ) : (
         <div>
-          <p className="text-gray-500 mb-6">Total: {bills.length} gastos</p>
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {bills.map(({ bill, status }) => (
               <Link key={bill.id} to={bill.id!}>

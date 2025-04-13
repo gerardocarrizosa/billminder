@@ -5,7 +5,6 @@ import { Bill } from '../interfaces/bill.interface';
 import { Payment } from '../interfaces/payment.interface';
 import { Button } from '@/modules/common/components/ui/button';
 import FormInput from '@/modules/common/components/form-input';
-import FormDatePicker from '@/modules/common/components/form-date-picker';
 import {
   Card,
   CardContent,
@@ -49,8 +48,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
     if (isEditing) fetchPayment();
   }, [billId, paymentId]);
 
-  if (loading || !bill) {
-    return <Loader />;
+  if (loading || !bill || !payment) {
+    return <Loader centered />;
   }
 
   const initialValues: Omit<Payment, 'id'> = {
@@ -68,10 +67,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
         await paymentService.update(payment.id, values);
         toast.success('Pago actualizado con éxito');
       } else {
-        await paymentService.create({
-          ...values,
-          // paidAt: paidAtDate,
-        } as Payment);
+        await paymentService.create(values as Payment);
         toast.success('Pago registrado con éxito');
       }
     } catch (error) {
@@ -93,10 +89,12 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <CardTitle>Agregar Pago</CardTitle>
+          <CardTitle>{isEditing ? 'Editar pago' : 'Agregar pago'}</CardTitle>
         </div>
         <CardDescription>
-          Registra un nuevo pago para {bill.name}
+          {isEditing
+            ? `Edita el pago para ${bill.name}`
+            : `Registra un nuevo pago para ${bill.name}`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,20 +107,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
             <Form className="space-y-6">
               <div className="space-y-4">
                 <FormInput label="Monto" name="amount" type="number" />
-                {/* <FormInput label="Fecha de pago" name="paidAt" type="date" /> */}
-                <FormDatePicker label="Fecha de pago" name="paidAt" />
+                <FormInput label="Fecha de pago" name="paidAt" type="date" />
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" type="button" onClick={() => {}}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => navigate(-1)}
+                >
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <span className="loading loading-spinner loading-sm"></span>
-                  ) : (
-                    'Guardar Pago'
-                  )}
+                  {isSubmitting ? <Loader /> : 'Guardar pago'}
                 </Button>
               </div>
             </Form>

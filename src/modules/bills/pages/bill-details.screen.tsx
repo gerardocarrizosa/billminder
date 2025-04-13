@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '../../common/utils/format-date';
 import { Link, useParams } from 'react-router-dom';
-import { BillWithIncludes } from '../interfaces/bill.interface';
+import { Bill } from '../interfaces/bill.interface';
 import { getBillTypeIcon } from '../utils/bill-type-icon';
 import { getBillTypeLabel } from '../utils/bill-type-label';
 import billService from '@/lib/api/bills.api';
@@ -28,18 +28,24 @@ import { createBillAnalyzer } from '../utils/bill-analyzer';
 import { formatCurrency } from '../../common/utils/format-currency';
 import { getStatusBadge } from '../utils/bill-status-badge';
 import Loader from '@/modules/common/components/loader';
+import { Payment } from '../interfaces/payment.interface';
+import paymentService from '@/lib/api/payments.api';
 
 const BillDetailsScreen: React.FC = () => {
   const { billId } = useParams();
   if (!billId) return;
-  const [bill, setBill] = useState<BillWithIncludes | null>(null);
+  const [bill, setBill] = useState<Bill | null>(null);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchBill = async (): Promise<void> => {
     setLoading(true);
     try {
-      const billData = await billService.getById(billId, { payments: true });
+      // const billData = await billService.getById(billId, { payments: true });
+      const billData = await billService.getById(billId);
+      const billPayments = await paymentService.getAllByBillId(billData?.id!);
       setBill(billData);
+      setPayments(billPayments);
     } catch (error) {
       console.error(`Error fetching bill with ID ${billId}:`, error);
     } finally {
@@ -52,12 +58,7 @@ const BillDetailsScreen: React.FC = () => {
   }, [billId]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        {/* <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div> */}
-        <Loader />
-      </div>
-    );
+    return <Loader centered />;
   }
 
   if (!bill) {
@@ -65,9 +66,9 @@ const BillDetailsScreen: React.FC = () => {
       <div className="container mx-auto py-6">
         <Card>
           <CardHeader>
-            <CardTitle>Gasto no encontrado</CardTitle>
+            <CardTitle>Recordatorio no encontrado</CardTitle>
             <CardDescription>
-              Parece que este gasto no existe 🤔.
+              Parece que este recordatorio no existe 🤔.
             </CardDescription>
           </CardHeader>
           <CardFooter>
@@ -127,7 +128,7 @@ const BillDetailsScreen: React.FC = () => {
             <CardTitle className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 {getBillTypeIcon(bill.type)}
-                <span>Información del gasto</span>
+                <span>Información general</span>
               </div>
               <div>
                 <Button variant="ghost">
@@ -169,13 +170,6 @@ const BillDetailsScreen: React.FC = () => {
                 <dt className="text-sm font-medium text-gray-500">Creado el</dt>
                 <dd className="text-base">{formatDate(bill.createdAt)}</dd>
               </div>
-
-              {/* <div>
-                <dt className="text-sm font-medium text-gray-500">
-                  Última actualización
-                </dt>
-                <dd className="text-base">{formatDate(bill.updatedAt)}</dd>
-              </div> */}
             </dl>
           </CardContent>
         </Card>
@@ -245,13 +239,13 @@ const BillDetailsScreen: React.FC = () => {
                         Último pago
                       </dt>
                       <dd className="text-base">
-                        {bill.payments && bill.payments.length > 0 ? (
+                        {payments && payments.length > 0 ? (
                           <div className="flex items-center gap-1">
                             <span className="font-medium">
-                              {formatCurrency(bill.payments[0].amount)}
+                              {formatCurrency(payments[0].amount)}
                             </span>
                             <span className="text-gray-500">
-                              el {formatDate(bill.payments[0].paidAt)}
+                              el {formatDate(payments[0].paidAt)}
                             </span>
                           </div>
                         ) : (
@@ -286,7 +280,7 @@ const BillDetailsScreen: React.FC = () => {
                 <dt className="text-sm font-medium text-gray-500">
                   Cantidad de pagos
                 </dt>
-                <dd className="text-base">{bill.payments?.length || 0}</dd>
+                <dd className="text-base">{payments?.length || 0}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">
@@ -296,7 +290,7 @@ const BillDetailsScreen: React.FC = () => {
                   {formatCurrency(totalPaid)}
                 </dd>
               </div>
-              {bill.payments && bill.payments.length > 0 && (
+              {payments && payments.length > 0 && (
                 <div>
                   <dt className="text-sm font-medium text-gray-500">
                     Promedio de pagos
@@ -318,7 +312,7 @@ const BillDetailsScreen: React.FC = () => {
           <CardDescription>Ve todos los pagos hechos</CardDescription>
         </CardHeader>
         <CardContent>
-          <PaymentsHistoryTable payments={bill.payments || []} />
+          <PaymentsHistoryTable payments={payments || []} />
         </CardContent>
       </Card>
     </div>

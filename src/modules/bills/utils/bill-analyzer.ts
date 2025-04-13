@@ -92,14 +92,24 @@ export class BillAnalyzer {
 
       case 'service':
       case 'subscription': {
+        const pastPaymentDeadline = new Date(
+          actualYear,
+          actualMonth - 1,
+          this.bill.paymentDeadline
+        );
         const actualPaymentDeadline = new Date(
           actualYear,
           actualMonth,
           this.bill.paymentDeadline
         );
 
-        if (lastPaymentDate <= actualPaymentDeadline) return true;
-        return false;
+        if (
+          lastPaymentDate <= actualPaymentDeadline &&
+          lastPaymentDate >= pastPaymentDeadline
+        )
+          return false;
+
+        return true;
       }
 
       default:
