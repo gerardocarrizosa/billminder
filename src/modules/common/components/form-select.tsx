@@ -12,7 +12,7 @@ import { Badge } from './ui/badge';
 
 interface Option {
   label: string;
-  value: string;
+  value: string | number;
   color?: string;
 }
 
@@ -57,7 +57,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
         </SelectTrigger>
         <SelectContent>
           {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
+            <SelectItem key={opt.value} value={opt.value.toString()}>
               {optionBadge && (
                 <Badge style={{ backgroundColor: opt.color }}></Badge>
               )}

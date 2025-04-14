@@ -239,5 +239,6 @@ class Categories {
   }
 }
 
-// Export for usage in different modules
-export default Categories;
+const categories_list = new Categories();
+
+export default categories_list;

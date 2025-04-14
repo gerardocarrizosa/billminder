@@ -34,7 +34,7 @@ const MonthlyBudgetMainPage = () => {
     <div>
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-lg">Gastos del mes</h3>
+        <h3 className="font-semibold text-lg">Presupuesto mensual</h3>
         <Button onClick={() => navigate('add-expense')}>
           <Plus />
         </Button>
@@ -68,7 +68,7 @@ const MonthlyBudgetMainPage = () => {
           </div>
         ) : (
           expenses.map((e) => (
-            <div className="bg-card border p-3 rounded-xl">
+            <div key={e.id} className="bg-card border p-3 rounded-xl">
               <div className="flex justify-between items-center">
                 <p className="text-sm">{e.name}</p>
                 <span className="font-semibold text-sm">

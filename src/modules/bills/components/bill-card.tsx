@@ -30,7 +30,7 @@ const BillCard: React.FC<BillCardData> = ({ bill, status }) => {
           {getBillTypeLabel(bill.type)}
         </div>
       </CardContent>
-      <CardFooter className="px-6 py-4 flex justify-between items-center">
+      <CardFooter className="px-6 flex justify-between items-center">
         <div className="flex flex-wrap gap-2 w-full">
           <div className="flex flex-col gap-2 flex-1 min-w-32">
             {bill.type === 'credit_card' && (

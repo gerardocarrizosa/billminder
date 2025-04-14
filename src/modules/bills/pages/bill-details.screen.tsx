@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { formatDate } from '../../common/utils/format-date';
 import { Link, useParams } from 'react-router-dom';
-import { Bill } from '../interfaces/bill.interface';
+import { BillWithIncludes } from '../interfaces/bill.interface';
 import { getBillTypeIcon } from '../utils/bill-type-icon';
 import { getBillTypeLabel } from '../utils/bill-type-label';
 import billService from '@/lib/api/bills.api';
@@ -28,24 +28,18 @@ import { createBillAnalyzer } from '../utils/bill-analyzer';
 import { formatCurrency } from '../../common/utils/format-currency';
 import { getStatusBadge } from '../utils/bill-status-badge';
 import Loader from '@/modules/common/components/loader';
-import { Payment } from '../interfaces/payment.interface';
-import paymentService from '@/lib/api/payments.api';
 
 const BillDetailsScreen: React.FC = () => {
   const { billId } = useParams();
   if (!billId) return;
-  const [bill, setBill] = useState<Bill | null>(null);
-  const [payments, setPayments] = useState<Payment[]>([]);
+  const [bill, setBill] = useState<BillWithIncludes | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchBill = async (): Promise<void> => {
     setLoading(true);
     try {
-      // const billData = await billService.getById(billId, { payments: true });
-      const billData = await billService.getById(billId);
-      const billPayments = await paymentService.getAllByBillId(billData?.id!);
+      const billData = await billService.getById(billId, { payments: true });
       setBill(billData);
-      setPayments(billPayments);
     } catch (error) {
       console.error(`Error fetching bill with ID ${billId}:`, error);
     } finally {
@@ -239,13 +233,13 @@ const BillDetailsScreen: React.FC = () => {
                         Último pago
                       </dt>
                       <dd className="text-base">
-                        {payments && payments.length > 0 ? (
+                        {bill.payments && bill.payments.length > 0 ? (
                           <div className="flex items-center gap-1">
                             <span className="font-medium">
-                              {formatCurrency(payments[0].amount)}
+                              {formatCurrency(bill.payments[0].amount)}
                             </span>
                             <span className="text-gray-500">
-                              el {formatDate(payments[0].paidAt)}
+                              el {formatDate(bill.payments[0].paidAt)}
                             </span>
                           </div>
                         ) : (
@@ -280,7 +274,7 @@ const BillDetailsScreen: React.FC = () => {
                 <dt className="text-sm font-medium text-gray-500">
                   Cantidad de pagos
                 </dt>
-                <dd className="text-base">{payments?.length || 0}</dd>
+                <dd className="text-base">{bill.payments?.length || 0}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">
@@ -290,7 +284,7 @@ const BillDetailsScreen: React.FC = () => {
                   {formatCurrency(totalPaid)}
                 </dd>
               </div>
-              {payments && payments.length > 0 && (
+              {bill.payments && bill.payments.length > 0 && (
                 <div>
                   <dt className="text-sm font-medium text-gray-500">
                     Promedio de pagos
@@ -312,7 +306,7 @@ const BillDetailsScreen: React.FC = () => {
           <CardDescription>Ve todos los pagos hechos</CardDescription>
         </CardHeader>
         <CardContent>
-          <PaymentsHistoryTable payments={payments || []} />
+          <PaymentsHistoryTable payments={bill.payments || []} />
         </CardContent>
       </Card>
     </div>

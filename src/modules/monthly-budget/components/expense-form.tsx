@@ -7,31 +7,31 @@ import { Expense, expenseSchema } from '../interfaces/expense.interface';
 import expensesService from '@/lib/api/expenses.api';
 import FormInput from '@/modules/common/components/form-input';
 import FormSelect from '@/modules/common/components/form-select';
-import { CategoryWithSubcategories } from '../interfaces/category.interface';
+import categories_list from '@/modules/categories/categories.service';
 
 interface ExpenseFormProps {
   expense?: Expense;
   isEditing?: boolean;
-  categoriesOptions: CategoryWithSubcategories[];
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   expense,
   isEditing = false,
-  categoriesOptions,
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const categories = categories_list.getAllCategories();
 
   if (!user) return null;
 
   const today = new Date();
+
   const initialValues: Omit<Expense, 'id'> = {
     userId: user.id,
     name: '',
     amount: 0,
-    categoryId: '',
-    subcategoryId: '',
+    categoryId: -1,
+    subcategoryId: -1,
     createdAt: today,
   };
 
@@ -65,24 +65,24 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               label="Categoría"
               name="categoryId"
               optionBadge
-              options={categoriesOptions.map((c) => ({
+              options={categories.map((c) => ({
                 label: c.name,
-                value: c.id!,
+                value: c.id,
                 color: c.color,
               }))}
             />
-            {values.categoryId !== '' && (
+            {categories.find((c) => c.id === Number(values.categoryId)) ? (
               <FormSelect
                 label="Subcategoría"
                 name="subcategoryId"
-                options={categoriesOptions
-                  .find((c) => c.id === values.categoryId)!
+                options={categories
+                  .find((c) => c.id === Number(values.categoryId))!
                   .subcategories.map((s) => ({
                     label: s.name,
-                    value: s.id!,
+                    value: s.id,
                   }))}
               />
-            )}
+            ) : null}
             <FormInput label="Fecha" name="createdAt" type="date" />
             <div className="flex space-x-4 pt-4">
               <Button
@@ -92,6 +92,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               >
                 Cancelar
               </Button>
+              <button type="button" onClick={() => console.log('vals', values)}>
+                values
+              </button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <span className="loading loading-spinner loading-sm"></span>

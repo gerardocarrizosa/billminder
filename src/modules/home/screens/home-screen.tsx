@@ -32,7 +32,7 @@ function HomeScreen() {
             onClick={() => navigate('/bills')}
             className="flex items-center gap-2"
           >
-            Ir a gastos
+            Ir a recordatorios
             <MoveRight size={16} />
           </Button>
         </CardFooter>

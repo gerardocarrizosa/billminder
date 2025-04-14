@@ -62,6 +62,28 @@ class CategoriesService {
       throw error;
     }
   }
+  async getAll2() {
+    try {
+      const q = query(this.collection);
+      const querySnapshot = await getDocs(q);
+
+      const categories: any[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        categories.push({
+          id: doc.id,
+          name: data.name,
+          color: data.color,
+          createdAt: data.createdAt.toDate(), // Convert Timestamp back to Date
+        });
+      });
+
+      return categories;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      throw error;
+    }
+  }
 
   async getById(id: string): Promise<Category | null> {
     try {
