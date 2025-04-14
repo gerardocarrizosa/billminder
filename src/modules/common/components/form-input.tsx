@@ -22,7 +22,7 @@ const FormInput: React.FC<FormInputProps> = ({
 }) => {
   const [field, meta] = useField(name);
 
-  if (type === 'date') {
+  if (type === 'date' && typeof field.value === 'object') {
     field.value = field.value.toISOString().split('T')[0];
   }
 

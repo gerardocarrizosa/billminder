@@ -37,14 +37,31 @@ const FormSelect: React.FC<FormSelectProps> = ({
 }) => {
   const [field, meta, helpers] = useField(name);
 
+  const stringValue =
+    field.value !== null && field.value !== undefined
+      ? field.value.toString()
+      : '';
+
+  const handleValueChange = (newValue: string) => {
+    const selectedOption = options.find(
+      (opt) => opt.value.toString() === newValue
+    );
+
+    if (selectedOption) {
+      helpers.setValue(selectedOption.value);
+    } else {
+      helpers.setValue(newValue);
+    }
+  };
+
   return (
     <div className={`mb-4 ${className}`}>
       <Label htmlFor={name} className="block text-sm font-medium mb-1">
         {label}
       </Label>
       <Select
-        value={field.value || ''}
-        onValueChange={(value) => helpers.setValue(value)}
+        value={stringValue}
+        onValueChange={handleValueChange}
         disabled={disabled}
       >
         <SelectTrigger

@@ -16,11 +16,11 @@ function Layout() {
       name: 'Recordatorios',
       icon: <CircleCheckBig size={20} />,
     },
-    {
-      path: 'expenses',
-      name: 'Gastos',
-      icon: <Notebook size={20} />,
-    },
+    // {
+    //   path: 'expenses',
+    //   name: 'Gastos',
+    //   icon: <Notebook size={20} />,
+    // },
     {
       path: 'budget',
       name: 'Presupuesto mensual',

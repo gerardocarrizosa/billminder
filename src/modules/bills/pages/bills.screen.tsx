@@ -72,9 +72,7 @@ function BillsScreen() {
     fetchBills();
   }, [user]);
 
-  if (loading) {
-    return <Loader centered />;
-  }
+  if (loading) return <Loader centered />;
 
   if (error) {
     return (
@@ -91,7 +89,7 @@ function BillsScreen() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold">Recordatorios</h1>
         <Link to="create">
-          <Button>
+          <Button className="rounded-full h-10 w-10 p-0">
             <Plus />
           </Button>
         </Link>

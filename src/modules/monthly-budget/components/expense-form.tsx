@@ -67,7 +67,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               optionBadge
               options={categories.map((c) => ({
                 label: c.name,
-                value: c.id,
+                value: c.id.toString(),
                 color: c.color,
               }))}
             />
@@ -79,7 +79,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                   .find((c) => c.id === Number(values.categoryId))!
                   .subcategories.map((s) => ({
                     label: s.name,
-                    value: s.id,
+                    value: s.id.toString(),
                   }))}
               />
             ) : null}
