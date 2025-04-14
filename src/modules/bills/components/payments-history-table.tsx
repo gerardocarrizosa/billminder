@@ -17,7 +17,8 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageSize, setCurrentPageSize] = useState(5);
+  const currentPageSize = 5;
+  // const [currentPageSize, setCurrentPageSize] = useState(5);
 
   const headerClass = theme === 'dark' ? 'bg-background/20' : 'bg-muted/50';
   const rowHoverClass =
