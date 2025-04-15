@@ -1,7 +1,7 @@
 import path from 'path';
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
@@ -17,6 +17,16 @@ export default defineConfig({
         description:
           'billminder for bills reminder and monthly budget tracking.',
         theme_color: '#0F0F0F',
+      },
+      workbox: {
+        navigateFallback: '/home', // your main landing route
+        runtimeCaching: [
+          {
+            // Important: avoid intercepting Firebase auth
+            urlPattern: /^\/__\/.*/i,
+            handler: 'NetworkOnly',
+          },
+        ],
       },
     }),
   ],
