@@ -23,6 +23,7 @@ import { MonthlyBudgetLayout } from './modules/monthly-budget/pages/monthly-budg
 import MonthlyBudgetMainPage from './modules/monthly-budget/pages/monthly-budget-main.page';
 import AddExpensePage from './modules/monthly-budget/pages/add-expense.page';
 import ExpenseFormPage from './modules/monthly-budget/pages/add-expense.page';
+import LifestyleBudgetPage from './modules/monthly-budget/pages/lifestyle.page';
 
 const router = createBrowserRouter([
   {
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
               {
                 path: 'expense/:expenseId',
                 element: <ExpenseFormPage isEditing />,
+              },
+              {
+                path: 'lifestyle',
+                element: <LifestyleBudgetPage />,
               },
             ],
           },

@@ -19,10 +19,9 @@ export default defineConfig({
         theme_color: '#0F0F0F',
       },
       workbox: {
-        navigateFallback: '/home', // your main landing route
+        navigateFallback: '/home',
         runtimeCaching: [
           {
-            // Important: avoid intercepting Firebase auth
             urlPattern: /^\/__\/.*/i,
             handler: 'NetworkOnly',
           },

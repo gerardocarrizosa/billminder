@@ -1,14 +1,14 @@
-import { CategoryWithSubcategories } from '../monthly-budget/interfaces/category.interface';
-import { Subcategory } from '../monthly-budget/interfaces/subcategory.interface';
+import { CategoryWithSubcategories } from './category.interface';
+import { Subcategory } from './subcategory.interface';
 import { categories } from './categories';
 import { CategoriesEnum } from './categories.enum';
-import { SubcategoryEnum } from './subcategories.enum';
+import { SubcategoriesEnum } from './subcategories.enum';
 
 class Categories {
   private categories: CategoryWithSubcategories[];
   private categoryMap = new Map<CategoriesEnum, CategoryWithSubcategories>();
   private subcategoryMap = new Map<
-    SubcategoryEnum,
+    SubcategoriesEnum,
     Subcategory & { categoryName: string }
   >();
 

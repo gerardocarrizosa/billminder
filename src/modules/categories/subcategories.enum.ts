@@ -1,129 +1,96 @@
-export enum HousingSubcategories {
-  rent,
-  mortgage,
-  taxes,
-  repairs,
-  association_costs,
+export enum SubcategoriesEnum {
+  housing_rent,
+  housing_mortgage,
+  housing_taxes,
+  housing_repairs,
+  housing_association_costs,
+  eating_groceries,
+  eating_restaurants,
+  charity_taxes,
+  charity_donations,
+  transportation_fuel,
+  transportation_repairs,
+  transportation_license,
+  transportation_parking,
+  transportation_public,
+  insurance_life,
+  insurance_medical,
+  insurance_home,
+  insurance_auto,
+  insurance_disability,
+  insurance_theft,
+  insurance_long_term_care,
+  savings_emergency,
+  savings_retirement,
+  savings_education,
+  services_electricity,
+  services_gas,
+  services_water,
+  services_waste,
+  services_mobile,
+  services_internet,
+  services_cable,
+  health_medications,
+  health_doctor,
+  health_dentist,
+  health_eye_doctor,
+  health_vitamins,
+  health_supplies,
+  health_other,
+  clothing_adults,
+  clothing_children,
+  clothing_cleaning,
+  recreation_entertainment,
+  recreation_vacation,
+  personal_childcare,
+  personal_personal_care,
+  personal_cosmetics,
+  personal_education,
+  personal_books,
+  personal_alimony,
+  personal_child_support,
+  personal_subscriptions,
+  personal_organization,
+  personal_gifts,
+  personal_furniture,
+  personal_pocket_money1,
+  personal_pocket_money2,
+  personal_baby_supplies,
+  personal_pet_supplies,
+  personal_music_tech,
+  personal_accountant,
+  personal_misc,
+  personal_other1,
+  personal_other2,
+  debt_car_loan1,
+  debt_car_loan2,
+  debt_credit_card1,
+  debt_credit_card2,
+  debt_credit_card3,
+  debt_credit_card4,
+  debt_credit_card5,
+  debt_study_loan1,
+  debt_study_loan2,
+  debt_study_loan3,
+  debt_study_loan4,
+  debt_personal_loan1,
+  debt_personal_loan2,
+  debt_other_debt1,
+  debt_other_debt2,
+  debt_other_debt3,
 }
 
-export enum EatingSubcategories {
-  groceries,
-  restaurants,
-}
-
-export enum CharitySubcategories {
-  taxes,
-  donations,
-}
-
-export enum TransportationSubcategories {
-  fuel,
-  repairs,
-  license,
-  parking,
-  public,
-}
-
-export enum InsuranceSubcategories {
-  life,
-  medical,
-  home,
-  auto,
-  disability,
-  theft,
-  long_term_care,
-}
-
-export enum SavingsSubcategories {
-  emergency,
-  retirement,
-  education,
-}
-
-export enum ServicesSubcategories {
-  electricity,
-  gas,
-  water,
-  waste,
-  mobile,
-  internet,
-  cable,
-}
-
-export enum HealthSubcategories {
-  medications,
-  doctor,
-  dentist,
-  eye_doctor,
-  vitamins,
-  supplies,
-  other,
-}
-
-export enum ClothingSubcategories {
-  adults,
-  children,
-  cleaning,
-}
-
-export enum RecreationSubcategories {
-  entertainment,
-  vacation,
-}
-
-export enum PersonalSubcategories {
-  childcare,
-  personal_care,
-  cosmetics,
-  education,
-  books,
-  alimony,
-  child_support,
-  subscriptions,
-  organization,
-  gifts,
-  furniture,
-  pocket_money1,
-  pocket_money2,
-  baby_supplies,
-  pet_supplies,
-  music_tech,
-  accountant,
-  misc,
-  other1,
-  other2,
-}
-
-export enum DebtSubcategories {
-  car_loan1,
-  car_loan2,
-  credit_card1,
-  credit_card2,
-  credit_card3,
-  credit_card4,
-  credit_card5,
-  study_loan1,
-  study_loan2,
-  study_loan3,
-  study_loan4,
-  personal_loan1,
-  personal_loan2,
-  other_debt1,
-  other_debt2,
-  other_debt3,
-}
-
-// Type to represent all possible subcategory types
-export type SubcategoryEnum =
-  | HousingSubcategories
-  | EatingSubcategories
-  | CharitySubcategories
-  | TransportationSubcategories
-  | InsuranceSubcategories
-  | SavingsSubcategories
-  | ServicesSubcategories
-  | HealthSubcategories
-  | ClothingSubcategories
-  | RecreationSubcategories
-  | PersonalSubcategories
-  | DebtSubcategories;
+// // Type to represent all possible subcategory types
+// export type SubcategoryEnum =
+//   | HousingSubcategories
+//   | EatingSubcategories
+//   | CharitySubcategories
+//   | TransportationSubcategories
+//   | InsuranceSubcategories
+//   | SavingsSubcategories
+//   | ServicesSubcategories
+//   | HealthSubcategories
+//   | ClothingSubcategories
+//   | RecreationSubcategories
+//   | PersonalSubcategories
+//   | DebtSubcategories;

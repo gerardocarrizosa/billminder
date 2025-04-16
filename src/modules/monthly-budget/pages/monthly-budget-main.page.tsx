@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import expensesService from '@/lib/api/expenses.api';
 import { useAuth } from '@/context/AuthContext';
 import Loader from '@/modules/common/components/loader';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MonthlyBudgetMainPage = () => {
   const { user } = useAuth();
@@ -59,12 +59,11 @@ const MonthlyBudgetMainPage = () => {
             })}
           </p>
         </div>
-        <Button
-          onClick={() => navigate('add-expense')}
-          className="rounded-full h-10 w-10 p-0"
-        >
-          <Plus className="h-5 w-5" />
-        </Button>
+        <Link to="/budget/add-expense">
+          <Button className="rounded-full h-10 w-10 p-0">
+            <Plus className="h-5 w-5" />
+          </Button>
+        </Link>
       </div>
 
       {/* Summary Card */}
@@ -87,13 +86,15 @@ const MonthlyBudgetMainPage = () => {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <Button
-          className="flex items-center justify-center gap-2 rounded-xl"
-          variant="outline"
+        <Link
+          to="/budget/lifestyle"
+          className="flex items-center justify-center gap-2 "
         >
-          <PersonStandingIcon className="h-5 w-5" />
-          <span className="font-medium">Mi estilo de vida</span>
-        </Button>
+          <Button className="rounded-xl" variant="outline">
+            <PersonStandingIcon className="h-5 w-5" />
+            <span className="font-medium">Mi estilo de vida</span>
+          </Button>
+        </Link>
         <Button
           className="flex items-center justify-center gap-2 rounded-xl"
           variant="outline"
