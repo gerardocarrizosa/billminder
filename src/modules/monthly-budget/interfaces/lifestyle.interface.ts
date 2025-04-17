@@ -8,6 +8,7 @@ export const lifestyleBudgetSchema = yup.object().shape({
 export const lifestyleSchema = yup.object().shape({
   id: yup.string().optional(),
   userId: yup.string().required('Campo requerido'),
+  income: yup.number().required('Campo requerido'),
   budgets: yup.array().of(lifestyleBudgetSchema).required(),
 });
 

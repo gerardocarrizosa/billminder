@@ -79,7 +79,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
                   .find((c) => c.id === Number(values.categoryId))!
                   .subcategories.map((s) => ({
                     label: s.name,
-                    value: s.id.toString(),
+                    value: s.id,
                   }))}
               />
             ) : null}

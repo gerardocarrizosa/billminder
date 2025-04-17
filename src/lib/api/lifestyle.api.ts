@@ -142,6 +142,7 @@ class LifestyleService {
         // Create a new document with this budget
         await this.create({
           userId,
+          income: 0, // Default income value
           budgets: [{ subcategoryId, budget }],
         });
         return;
@@ -191,6 +192,7 @@ class LifestyleService {
         // Create a new document with these budgets
         await this.create({
           userId,
+          income: 0, // Default income value
           budgets,
         });
         return;
@@ -215,6 +217,36 @@ class LifestyleService {
       await updateDoc(docRef, { budgets: updatedBudgets });
     } catch (error) {
       console.error('Error updating budgets:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update income amount
+   * @param userId User ID
+   * @param income New income amount
+   * @returns Promise resolving when complete
+   */
+  async updateIncome(userId: string, income: number): Promise<void> {
+    try {
+      // Get user's lifestyle document
+      const lifestyle = await this.getByUserId(userId);
+
+      if (!lifestyle) {
+        // Create a new document with this income
+        await this.create({
+          userId,
+          income,
+          budgets: [],
+        });
+        return;
+      }
+
+      // Update the document
+      const docRef = doc(db, this.collectionName, lifestyle.id!);
+      await updateDoc(docRef, { income });
+    } catch (error) {
+      console.error('Error updating income:', error);
       throw error;
     }
   }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   ArrowLeftIcon,
   SaveIcon,
@@ -27,15 +27,14 @@ import toast from 'react-hot-toast';
 
 const LifestyleBudgetPage = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [lifestyle, setLifestyle] = useState<Lifestyle | null>(null);
   const [budgets, setBudgets] = useState<Record<number, number>>({});
+  const [income, setIncome] = useState<number>(0);
   const [totalBudget, setTotalBudget] = useState(0);
   const categories = categories_list.getAllCategories();
 
-  // Fetch existing lifestyle budgets
   useEffect(() => {
     const fetchLifestyleBudgets = async () => {
       if (!user) return;
@@ -45,8 +44,8 @@ const LifestyleBudgetPage = () => {
 
         if (lifestyleData) {
           setLifestyle(lifestyleData);
+          setIncome(lifestyleData.income || 0);
 
-          // Convert budgets array to object for easier access
           const budgetsObj: Record<number, number> = {};
           lifestyleData.budgets.forEach((budget) => {
             budgetsObj[budget.subcategoryId] = budget.budget;
@@ -55,9 +54,9 @@ const LifestyleBudgetPage = () => {
           setBudgets(budgetsObj);
           calculateTotalBudget(budgetsObj);
         } else {
-          // Initialize empty lifestyle object
           setLifestyle({
             userId: user.id,
+            income: 0,
             budgets: [],
           });
         }
@@ -72,7 +71,6 @@ const LifestyleBudgetPage = () => {
     fetchLifestyleBudgets();
   }, [user]);
 
-  // Calculate total budget amount
   const calculateTotalBudget = (budgetsObj: Record<number, number>) => {
     const total = Object.values(budgetsObj).reduce(
       (sum, value) => sum + value,
@@ -81,12 +79,9 @@ const LifestyleBudgetPage = () => {
     setTotalBudget(total);
   };
 
-  // Handle budget input change
   const handleBudgetChange = (subcategoryId: number, value: string) => {
-    // Convert to number and handle empty input
     const numValue = value === '' ? 0 : Number(value);
 
-    // Update budgets state
     const updatedBudgets = {
       ...budgets,
       [subcategoryId]: numValue,
@@ -96,13 +91,16 @@ const LifestyleBudgetPage = () => {
     calculateTotalBudget(updatedBudgets);
   };
 
-  // Save all budgets
+  const handleIncomeChange = (value: string) => {
+    const numValue = value === '' ? 0 : Number(value);
+    setIncome(numValue);
+  };
+
   const handleSaveBudgets = async () => {
     if (!user || !lifestyle) return;
 
     setSaving(true);
     try {
-      // Convert budgets object to array of budget items
       const budgetItems: LifestyleBudget[] = Object.entries(budgets)
         .filter(([_, value]) => value > 0)
         .map(([key, value]) => ({
@@ -110,13 +108,12 @@ const LifestyleBudgetPage = () => {
           budget: value,
         }));
 
-      // Create updated lifestyle object
       const updatedLifestyle: Lifestyle = {
         ...lifestyle,
+        income: income,
         budgets: budgetItems,
       };
 
-      // Save to Firestore
       await lifestyleService.save(updatedLifestyle);
 
       toast.success('Presupuestos guardados correctamente');
@@ -131,21 +128,35 @@ const LifestyleBudgetPage = () => {
   if (loading) return <Loader centered />;
 
   return (
-    <div className="max-w-md mx-auto pb-20">
+    <div className="max-w-xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex items-center mb-6">
-        <Button
-          variant="ghost"
-          className="mr-2 p-2"
-          onClick={() => navigate('/budget')}
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-        </Button>
+      <div className="flex items-center mb-4">
+        <Link to="/budget">
+          <Button variant="ghost" className="mr-2 p-2">
+            <ArrowLeftIcon className="h-5 w-5" />
+          </Button>
+        </Link>
         <div>
           <h2 className="font-bold text-xl">Mi estilo de vida</h2>
           <p className="text-sm text-muted-foreground">
-            Define tu presupuesto mensual por categoría
+            Define tu presupuesto mensual por categoría conforme tu estilo de
+            vida y gustos.
           </p>
+        </div>
+      </div>
+
+      {/* Income Input */}
+      <div className="bg-card border rounded-xl p-4 mb-6 shadow-sm">
+        <h3 className="font-medium mb-3">Ingreso Mensual</h3>
+        <div className="relative">
+          <DollarSignIcon className="h-4 w-4 text-muted-foreground absolute left-2 top-1/2 transform -translate-y-1/2" />
+          <Input
+            type="number"
+            value={income > 0 ? income : ''}
+            onChange={(e) => handleIncomeChange(e.target.value)}
+            placeholder="0"
+            className="pl-8"
+          />
         </div>
       </div>
 
@@ -163,6 +174,21 @@ const LifestyleBudgetPage = () => {
         <p className="text-2xl font-bold text-center my-3">
           {formatCurrency(totalBudget)}
         </p>
+        {income > 0 && (
+          <div className="text-center text-sm">
+            <span
+              className={`${
+                totalBudget > income ? 'text-red-500' : 'text-green-500'
+              }`}
+            >
+              {totalBudget > income
+                ? `${formatCurrency(
+                    totalBudget - income
+                  )} por encima de tu ingreso`
+                : `${formatCurrency(income - totalBudget)} disponible`}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Categories Accordion */}
@@ -170,12 +196,25 @@ const LifestyleBudgetPage = () => {
         {categories.map((category) => (
           <AccordionItem key={category.id} value={`category-${category.id}`}>
             <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center">
-                <div
-                  className="w-4 h-4 rounded-full mr-3"
-                  style={{ backgroundColor: category.color }}
-                />
-                <span>{category.name}</span>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <div
+                    className="w-4 h-4 rounded-full mr-3"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  <span>{category.name}</span>
+                </div>
+                {category.subcategories.some(
+                  (sub) => (budgets[sub.id] || 0) > 0
+                ) && (
+                  <div className="bg-primary/10 text-primary text-xs font-medium rounded-full px-2 py-0.5 mr-2">
+                    {
+                      category.subcategories.filter(
+                        (sub) => (budgets[sub.id] || 0) > 0
+                      ).length
+                    }
+                  </div>
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
