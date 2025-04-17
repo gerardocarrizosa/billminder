@@ -21,7 +21,7 @@ import {
   Lifestyle,
   LifestyleBudget,
 } from '@/modules/monthly-budget/interfaces/lifestyle.interface';
-import categories_list from '@/modules/categories/categories.service';
+import categoriesService from '@/modules/categories/categories.service';
 import lifestyleService from '@/lib/api/lifestyle.api';
 import toast from 'react-hot-toast';
 
@@ -33,7 +33,7 @@ const LifestyleBudgetPage = () => {
   const [budgets, setBudgets] = useState<Record<number, number>>({});
   const [income, setIncome] = useState<number>(0);
   const [totalBudget, setTotalBudget] = useState(0);
-  const categories = categories_list.getAllCategories();
+  const categories = categoriesService.getAllCategories();
 
   useEffect(() => {
     const fetchLifestyleBudgets = async () => {

@@ -42,7 +42,7 @@ class ExpensesService {
       const q = query(
         this.collection,
         where('userId', '==', userId),
-        orderBy('createdAt', 'asc')
+        orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
 

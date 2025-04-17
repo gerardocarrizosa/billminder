@@ -4,7 +4,7 @@ import { categories } from './categories';
 import { CategoriesEnum } from './categories.enum';
 import { SubcategoriesEnum } from './subcategories.enum';
 
-class Categories {
+class CategoriesService {
   private categories: CategoryWithSubcategories[];
   private categoryMap = new Map<CategoriesEnum, CategoryWithSubcategories>();
   private subcategoryMap = new Map<
@@ -105,56 +105,13 @@ class Categories {
     return this.subcategoryMap.get(subcategoryId) || null;
   }
 
-  //   /**
-  //    * Check if a subcategory is a necessity
-  //    * @param subcategoryEnum - The subcategory enum value
-  //    * @returns Boolean indicating if the subcategory is a necessity
-  //    */
-  //   isSubcategoryNecessity(subcategoryEnum: SubcategoryEnum): boolean {
-  //     return this.necessityMap.get(subcategoryEnum) || false;
-  //   }
+  getCategoryBySubcategory(subcategoryId: SubcategoriesEnum) {
+    const category = this.categories.find((c) =>
+      c.subcategories.map((s) => s.id).includes(subcategoryId)
+    );
 
-  //   /**
-  //    * Search for categories and subcategories by name
-  //    * @param query - The search query
-  //    * @returns Object with matching categories and subcategories
-  //    */
-  //   search(query: string): {
-  //     categories: Array<{ id: string; name: string }>;
-  //     subcategories: Array<Subcategory & { categoryName: string }>;
-  //   } {
-  //     if (!query || typeof query !== 'string') {
-  //       return { categories: [], subcategories: [] };
-  //     }
-
-  //     const normalizedQuery = query.toLowerCase();
-  //     const results = {
-  //       categories: [] as Array<{ id: string; name: string }>,
-  //       subcategories: [] as Array<Subcategory & { categoryName: string }>,
-  //     };
-
-  //     // Search categories
-  //     this.categories.forEach((category) => {
-  //       if (category.name.toLowerCase().includes(normalizedQuery)) {
-  //         results.categories.push({
-  //           id: category.id,
-  //           name: category.name,
-  //         });
-  //       }
-
-  //       // Search subcategories
-  //       category.subcategories.forEach((subcategory) => {
-  //         if (subcategory.name.toLowerCase().includes(normalizedQuery)) {
-  //           results.subcategories.push({
-  //             ...subcategory,
-  //             categoryName: category.name,
-  //           });
-  //         }
-  //       });
-  //     });
-
-  //     return results;
-  //   }
+    return category || null;
+  }
 
   /**
    * Get all categories separated by necessity
@@ -239,6 +196,6 @@ class Categories {
   }
 }
 
-const categories_list = new Categories();
+const categoriesService = new CategoriesService();
 
-export default categories_list;
+export default categoriesService;

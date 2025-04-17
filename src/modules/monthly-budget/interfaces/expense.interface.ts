@@ -11,10 +11,6 @@ export const expenseSchema = yup.object().shape({
     .oneOf(Object.values(CategoriesEnum).filter((v) => typeof v === 'number'))
     .required(),
   subcategoryId: yup.number().required(),
-  // categoryId: yup.string().required('La categoria del gasto es requerida'),
-  // subcategoryId: yup
-  //   .string()
-  //   .required('La subcategoria del gasto es requerida'),
   createdAt: yup.date().required(),
 });
 

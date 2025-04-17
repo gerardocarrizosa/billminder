@@ -7,7 +7,7 @@ import { Expense, expenseSchema } from '../interfaces/expense.interface';
 import expensesService from '@/lib/api/expenses.api';
 import FormInput from '@/modules/common/components/form-input';
 import FormSelect from '@/modules/common/components/form-select';
-import categories_list from '@/modules/categories/categories.service';
+import categoriesService from '@/modules/categories/categories.service';
 
 interface ExpenseFormProps {
   expense?: Expense;
@@ -20,7 +20,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const categories = categories_list.getAllCategories();
+  const categories = categoriesService.getAllCategories();
 
   if (!user) return null;
 
