@@ -37,11 +37,12 @@ class ExpensesService {
     }
   }
 
-  async getAllByUserId(userId: string): Promise<Expense[]> {
+  async getAllByUserId(userId: string, month: number): Promise<Expense[]> {
     try {
       const q = query(
         this.collection,
         where('userId', '==', userId),
+        where('month', '==', month),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);

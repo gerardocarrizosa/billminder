@@ -6,107 +6,63 @@ import {
   CalendarIcon,
   Plus,
   Settings,
-  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
-import { Expense } from '../interfaces/expense.interface';
 import { useAuth } from '@/context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import Loader from '@/modules/common/components/loader';
-import expensesService from '@/lib/api/expenses.api';
-import ExpenseScrollviewItem, {
-  BudgetStatus,
-} from '../components/expense-scrollview-item';
-import { Lifestyle } from '../interfaces/lifestyle.interface';
-import lifestyleService from '@/lib/api/lifestyle.api';
-import categoriesService from '@/modules/categories/categories.service';
+import ExpenseScrollviewItem from '../components/expense-scrollview-item';
+import BudgetSubcategoryStatusbar from '../components/budget-subcategory-statusbar';
+import { useExpensesStore } from '../stores/useExpensesStore';
 
 const MonthlyBudgetMainPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [lifestyle, setLifestyle] = useState<Lifestyle | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [subcategoryNames, setSubcategoryNames] = useState<
-    Record<number, string>
-  >({});
-  const categories = categoriesService.getAllCategories();
+  const [showAllSubcategories, setShowAllSubcategories] = useState(false);
+
+  // Get data and functions from the Zustand store
+  const {
+    expenses,
+    expensesTotal,
+    subcategoryBudgets,
+    criticalSubcategories,
+    normalSubcategories,
+    loading,
+    error,
+    fetchUserData,
+  } = useExpensesStore();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
-      try {
-        // Fetch expenses and lifestyle data in parallel
-        const [expensesResponse, lifestyleResponse] = await Promise.all([
-          expensesService.getAllByUserId(user.id),
-          lifestyleService.getByUserId(user.id),
-        ]);
-
-        setExpenses(expensesResponse);
-        setLifestyle(lifestyleResponse);
-
-        // Get all subcategory names for display purposes
-        const subcategoryMapping: Record<number, string> = {};
-
-        // Flatten all subcategories into a mapping object
-        categories.forEach((category) => {
-          category.subcategories.forEach((subcategory) => {
-            subcategoryMapping[subcategory.id] = subcategory.name;
-          });
-        });
-
-        setSubcategoryNames(subcategoryMapping);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user]);
-
-  // Calculate expenses total
-  let expensesTotal = 0;
-  expenses.forEach((e) => (expensesTotal += e.amount));
-
-  // Calculate expenses by subcategory
-  const expensesBySubcategory: Record<number, number> = {};
-  expenses.forEach((expense) => {
-    const { subcategoryId, amount } = expense;
-    expensesBySubcategory[subcategoryId] =
-      (expensesBySubcategory[subcategoryId] || 0) + amount;
-  });
-
-  // Get budget status for each subcategory
-  const getBudgetStatus = (
-    subcategoryId: number
-  ): { status: BudgetStatus; percentage: number } => {
-    if (!lifestyle) return { status: 'no-budget', percentage: 0 };
-
-    const budgetEntry = lifestyle.budgets.find(
-      (b) => b.subcategoryId === subcategoryId
-    );
-    if (!budgetEntry) return { status: 'no-budget', percentage: 0 };
-
-    const spent = expensesBySubcategory[subcategoryId] || 0;
-    const budgetLimit = budgetEntry.budget;
-    const percentage = (spent / budgetLimit) * 100;
-
-    if (percentage >= 100) {
-      return { status: 'exceeded', percentage };
-    } else if (percentage >= 70) {
-      return { status: 'warning', percentage };
-    } else {
-      return { status: 'normal', percentage };
+    if (user) {
+      fetchUserData(user.id);
     }
-  };
+  }, [user, fetchUserData]);
 
-  // Group expenses by subcategory
-  const subcategories = Array.from(
-    new Set(expenses.map((expense) => expense.subcategoryId))
-  );
+  // Determine which subcategories to display
+  const displayedSubcategories = showAllSubcategories
+    ? subcategoryBudgets
+    : criticalSubcategories;
+
+  // Check if we have normal subcategories to show
+  const hasMoreSubcategories = normalSubcategories.length > 0;
 
   if (loading) return <Loader centered />;
+
+  if (error) {
+    return (
+      <div className="max-w-xl mx-auto p-4 bg-red-50 rounded-xl border border-red-200 text-red-800">
+        <h3 className="font-medium mb-2">Error loading data</h3>
+        <p>{error}</p>
+        <Button
+          onClick={() => user && fetchUserData(user.id)}
+          className="mt-4 bg-red-600 hover:bg-red-700"
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto">
@@ -147,98 +103,38 @@ const MonthlyBudgetMainPage = () => {
       </div>
 
       {/* Budget Status Section */}
-      {lifestyle && subcategories.length > 0 && (
+      {subcategoryBudgets.length > 0 && (
         <div className="bg-card border rounded-xl p-4 mb-6 shadow-sm">
           <h3 className="font-medium text-lg mb-4">Estado del Presupuesto</h3>
           <div className="space-y-4">
-            {subcategories.map((subcategoryId) => {
-              const budgetStatus = getBudgetStatus(subcategoryId);
-              if (budgetStatus.status === 'no-budget') return null;
+            {/* Show subcategories based on current state */}
+            {displayedSubcategories.map((subcategory) => (
+              <BudgetSubcategoryStatusbar
+                key={subcategory.id}
+                subcategory={subcategory}
+              />
+            ))}
 
-              const subcategoryExpenses = expenses.filter(
-                (e) => e.subcategoryId === subcategoryId
-              );
-              const totalAmount = subcategoryExpenses.reduce(
-                (sum, e) => sum + e.amount,
-                0
-              );
-              const budgetEntry = lifestyle.budgets.find(
-                (b) => b.subcategoryId === subcategoryId
-              );
-              const budgetLimit = budgetEntry?.budget || 0;
-
-              // Skip if there's no budget set for this subcategory
-              if (budgetLimit === 0) return null;
-
-              return (
-                <div
-                  key={subcategoryId}
-                  className="border-b pb-3 last:border-b-0"
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        {subcategoryNames[subcategoryId] ||
-                          `Subcategoría ${subcategoryId}`}
-                      </span>
-                      {budgetStatus.status === 'warning' && (
-                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                      )}
-                      {budgetStatus.status === 'exceeded' && (
-                        <AlertTriangle className="h-4 w-4 text-red-500" />
-                      )}
-                    </div>
-                    <div className="text-sm">
-                      <span
-                        className={
-                          budgetStatus.status === 'exceeded'
-                            ? 'text-red-500 font-bold'
-                            : budgetStatus.status === 'warning'
-                            ? 'text-yellow-500 font-bold'
-                            : ''
-                        }
-                      >
-                        {formatCurrency(totalAmount)}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {' '}
-                        / {formatCurrency(budgetLimit)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="w-full bg-muted rounded-full h-2 mt-1">
-                    <div
-                      className={`h-2 rounded-full ${
-                        budgetStatus.status === 'exceeded'
-                          ? 'bg-red-500'
-                          : budgetStatus.status === 'warning'
-                          ? 'bg-yellow-500'
-                          : 'bg-primary'
-                      }`}
-                      style={{
-                        width: `${Math.min(budgetStatus.percentage, 100)}%`,
-                      }}
-                    ></div>
-                  </div>
-
-                  {/* Warning or Error message */}
-                  {budgetStatus.status === 'warning' && (
-                    <p className="text-xs text-yellow-500 mt-1">
-                      ¡Atención! Has usado el{' '}
-                      {budgetStatus.percentage.toFixed(0)}% del presupuesto
-                    </p>
-                  )}
-                  {budgetStatus.status === 'exceeded' && (
-                    <p className="text-xs text-red-500 mt-1">
-                      ¡Alerta! Has excedido el presupuesto por{' '}
-                      {formatCurrency(totalAmount - budgetLimit)}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+            {/* Show "See more" button if there are normal subcategories */}
+            {hasMoreSubcategories && (
+              <Button
+                variant="outline"
+                className="w-full mt-2 flex items-center justify-center"
+                onClick={() => setShowAllSubcategories(!showAllSubcategories)}
+              >
+                {showAllSubcategories ? (
+                  <>
+                    <ChevronUp className="h-4 w-4 mr-1" />
+                    Ver menos
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 mr-1" />
+                    Ver más categorías ({normalSubcategories.length})
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       )}

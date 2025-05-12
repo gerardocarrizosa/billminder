@@ -33,6 +33,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     categoryId: -1,
     subcategoryId: -1,
     createdAt: today,
+    month: today.getMonth(),
   };
 
   const formInitialValues = isEditing && expense ? expense : initialValues;
@@ -67,7 +68,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               optionBadge
               options={categories.map((c) => ({
                 label: c.name,
-                value: c.id.toString(),
+                value: c.id,
                 color: c.color,
               }))}
             />

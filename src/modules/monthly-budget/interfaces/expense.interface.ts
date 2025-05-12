@@ -10,6 +10,7 @@ export const expenseSchema = yup.object().shape({
     .number()
     .oneOf(Object.values(CategoriesEnum).filter((v) => typeof v === 'number'))
     .required(),
+  month: yup.number().integer().positive().required(),
   subcategoryId: yup.number().required(),
   createdAt: yup.date().required(),
 });
