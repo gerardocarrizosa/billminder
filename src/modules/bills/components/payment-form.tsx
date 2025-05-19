@@ -48,7 +48,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ isEditing = false }) => {
     if (isEditing) fetchPayment();
   }, [billId, paymentId]);
 
-  if (loading || !bill || !payment) {
+  if (loading || !bill || (isEditing && !payment)) {
     return <Loader centered />;
   }
 

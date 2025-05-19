@@ -104,8 +104,7 @@ const BillDetailsScreen: React.FC = () => {
             </Badge> */}
           </div>
           <div className="flex gap-2">
-            <Link to="payments/create" className="w-full">
-              {/* <Button variant="outline" className="w-full"> */}
+            <Link to="payments/new" className="w-full">
               <Button className="w-full">
                 <Plus />
                 Agregar pago

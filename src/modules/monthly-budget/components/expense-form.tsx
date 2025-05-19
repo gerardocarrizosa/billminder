@@ -93,9 +93,9 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
               >
                 Cancelar
               </Button>
-              <button type="button" onClick={() => console.log('vals', values)}>
+              {/* <button type="button" onClick={() => console.log('vals', values)}>
                 values
-              </button>
+              </button> */}
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <span className="loading loading-spinner loading-sm"></span>
