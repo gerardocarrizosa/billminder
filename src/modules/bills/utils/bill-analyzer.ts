@@ -12,6 +12,19 @@ export class BillAnalyzer {
   }
 
   /**
+   * Get a valid date, clamping invalid days (e.g., day 31 in February)
+   * to the last valid day of the month
+   */
+  private getValidDate(year: number, month: number, day: number): Date {
+    const date = new Date(year, month, day);
+    // If the day was auto-adjusted (invalid day), clamp to last day of month
+    if (date.getDate() !== day && day > 28) {
+      return new Date(year, month + 1, 0);
+    }
+    return date;
+  }
+
+  /**
    * Calculate total amount paid for the bill
    */
   getTotalPaid(): number {
@@ -53,7 +66,7 @@ export class BillAnalyzer {
       nextPaymentYear++;
     }
 
-    return new Date(
+    return this.getValidDate(
       nextPaymentYear,
       nextPaymentMonth,
       this.bill.paymentDeadline
@@ -62,58 +75,157 @@ export class BillAnalyzer {
 
   /**
    * Check if a bill is due based on last payment made.
+   * Returns: true (due), false (paid), 'skipped' (zero amount), or null (no payments)
    */
   isBillDue() {
     if (!this.bill.payments || this.bill.payments.length === 0) return null;
 
     const lastPayment = this.bill.payments[0];
+
+    // Check if the last payment has zero amount (unused month)
+    if (lastPayment.amount === 0) {
+      return 'skipped';
+    }
+
     const lastPaymentDate = lastPayment.paidAt;
-    let actualMonth = new Date().getMonth(); // don't add 1 since you need the past month;
-    const actualYear = new Date().getFullYear();
+    const today = new Date();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
 
     switch (this.bill.type) {
       case 'credit_card': {
-        if (
-          this.bill.cutoffDate &&
-          this.bill.paymentDeadline &&
-          this.bill.cutoffDate >= this.bill.paymentDeadline
-        ) {
-          actualMonth -= 1;
+        // Check if cutoffDate and paymentDeadline exist
+        if (!this.bill.cutoffDate || !this.bill.paymentDeadline) {
+          return null;
         }
 
-        const actualCutoffDate = new Date(
-          actualYear,
-          actualMonth,
+        // Calculate the most recent cutoff date based on today
+        let cutoffMonth = todayMonth;
+        let cutoffYear = todayYear;
+
+        if (today.getDate() <= this.bill.cutoffDate) {
+          // We haven't reached this month's cutoff yet, so use last month's cutoff
+          cutoffMonth = todayMonth - 1;
+          if (cutoffMonth < 0) {
+            cutoffMonth = 11;
+            cutoffYear--;
+          }
+        }
+        // If today.getDate() > cutoffDate, we use this month's cutoff (already set)
+
+        const mostRecentCutoffDate = this.getValidDate(
+          cutoffYear,
+          cutoffMonth,
           this.bill.cutoffDate
         );
-        if (lastPaymentDate <= actualCutoffDate) return true;
-        return false;
+
+        // Calculate the payment deadline corresponding to the cutoff date
+        // Payment deadline is typically in the same month or next month after cutoff
+        let deadlineMonth = cutoffMonth;
+        let deadlineYear = cutoffYear;
+
+        // If deadline day is before cutoff day, deadline is next month
+        if (this.bill.paymentDeadline < this.bill.cutoffDate) {
+          deadlineMonth = cutoffMonth + 1;
+          if (deadlineMonth > 11) {
+            deadlineMonth = 0;
+            deadlineYear++;
+          }
+        }
+
+        const correspondingPaymentDeadline = this.getValidDate(
+          deadlineYear,
+          deadlineMonth,
+          this.bill.paymentDeadline
+        );
+
+        // Check if last payment is for the current billing cycle
+        // Payment is valid if it was made after the most recent cutoff date
+        const hasPaymentForCurrentPeriod =
+          lastPaymentDate >= mostRecentCutoffDate;
+
+        if (!hasPaymentForCurrentPeriod) {
+          // No payment for current period
+          // If deadline hasn't passed yet, show NA
+          if (today <= correspondingPaymentDeadline) {
+            return null; // NA - no payment yet for current period, deadline not reached
+          }
+          // Deadline has passed without payment
+          return true; // due - payment deadline passed without payment
+        }
+
+        // Payment exists for current period
+        // Check if today is after payment deadline AND last payment was before deadline
+        // This means payment deadline has passed but payment was made after deadline
+        if (
+          today > correspondingPaymentDeadline &&
+          lastPaymentDate < correspondingPaymentDeadline
+        ) {
+          return true; // due - payment deadline passed without timely payment
+        }
+
+        return false; // paid - payment exists for the current period
       }
 
       case 'service':
       case 'subscription': {
-        const pastPaymentDeadline = new Date(
-          actualYear,
-          actualMonth - 1,
-          this.bill.paymentDeadline
-        );
-        const actualPaymentDeadline = new Date(
-          actualYear,
-          actualMonth,
+        // Check if paymentDeadline exists
+        if (!this.bill.paymentDeadline) {
+          return null;
+        }
+
+        // Calculate the current payment deadline based on today
+        let deadlineMonth = todayMonth;
+        let deadlineYear = todayYear;
+
+        // Calculate the start of the current period (beginning of current month)
+        const currentPeriodStart = new Date(todayYear, todayMonth, 1);
+
+        // If today's day is past the deadline, check if we need next month's deadline
+        if (today.getDate() > this.bill.paymentDeadline) {
+          // We're past this month's deadline, so check next month's deadline
+          deadlineMonth = todayMonth + 1;
+          if (deadlineMonth > 11) {
+            deadlineMonth = 0;
+            deadlineYear++;
+          }
+        }
+
+        const currentPaymentDeadline = this.getValidDate(
+          deadlineYear,
+          deadlineMonth,
           this.bill.paymentDeadline
         );
 
+        // Check if last payment is for the current period
+        // Payment is valid if it was made in the current month (or after period start)
+        const hasPaymentForCurrentPeriod =
+          lastPaymentDate >= currentPeriodStart;
+
+        if (!hasPaymentForCurrentPeriod) {
+          // No payment for current period
+          // If deadline hasn't passed yet, show NA
+          if (today <= currentPaymentDeadline) {
+            return null; // NA - no payment yet for current period, deadline not reached
+          }
+          // Deadline has passed without payment
+          return true; // due - payment deadline passed without payment
+        }
+
+        // Payment exists for current period
+        // Check if today is after payment deadline AND last payment was before deadline
         if (
-          lastPaymentDate <= actualPaymentDeadline &&
-          lastPaymentDate >= pastPaymentDeadline
-        )
-          return false;
+          today > currentPaymentDeadline &&
+          lastPaymentDate < currentPaymentDeadline
+        ) {
+          return true; // due - payment deadline passed without timely payment
+        }
 
-        return true;
+        return false; // paid - payment exists for the current period
       }
 
       default:
-        break;
+        return null;
     }
   }
 

@@ -85,7 +85,21 @@ class PaymentService {
       const cleanedUpdateData = Object.fromEntries(
         Object.entries(updateData).filter(([_, v]) => v !== undefined)
       );
-      await updateDoc(docRef, cleanedUpdateData);
+
+      // Convert date fields to Firestore Timestamps
+      const convertedData: any = { ...cleanedUpdateData };
+      if (cleanedUpdateData.paidAt instanceof Date) {
+        const fb_paidAtDate = handleFirebaseDate(cleanedUpdateData.paidAt);
+        convertedData.paidAt = Timestamp.fromDate(fb_paidAtDate);
+      }
+      if (cleanedUpdateData.createdAt instanceof Date) {
+        const fb_createdAtDate = handleFirebaseDate(
+          cleanedUpdateData.createdAt
+        );
+        convertedData.createdAt = Timestamp.fromDate(fb_createdAtDate);
+      }
+
+      await updateDoc(docRef, convertedData);
     } catch (error) {
       console.error('Error updating payment:', error);
       throw error;

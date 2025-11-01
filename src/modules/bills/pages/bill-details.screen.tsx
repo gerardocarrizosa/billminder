@@ -180,8 +180,12 @@ const BillDetailsScreen: React.FC = () => {
               {/* status based on the last payment */}
               <div className="flex justify-between mb-4">
                 <h3 className="text-base font-medium mb-1">Próximo pago</h3>
-                {isBillDue ? (
+                {isBillDue === 'skipped' ? (
+                  <div>{getStatusBadge('skipped')}</div>
+                ) : isBillDue ? (
                   <div>{getStatusBadge('due')}</div>
+                ) : isBillDue === null ? (
+                  <div>{getStatusBadge('NA')}</div>
                 ) : (
                   <div>{getStatusBadge('paid')}</div>
                 )}

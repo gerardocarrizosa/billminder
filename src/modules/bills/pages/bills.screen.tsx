@@ -37,6 +37,13 @@ function BillsScreen() {
               });
               continue;
             }
+            if (isDue === 'skipped') {
+              billsData.push({
+                bill,
+                status: 'skipped',
+              });
+              continue;
+            }
             if (isDue) {
               billsData.push({
                 bill,
@@ -54,7 +61,8 @@ function BillsScreen() {
             const priorityOrder: Record<BillCardStatus, number> = {
               due: 0,
               paid: 1,
-              NA: 2,
+              skipped: 2,
+              NA: 3,
             };
             return priorityOrder[a.status] - priorityOrder[b.status];
           });

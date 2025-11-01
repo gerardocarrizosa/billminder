@@ -9,6 +9,8 @@ export const getStatusBadge = (status: BillCardStatus) => {
       return <Badge className="bg-red-100 text-red-800">Pendiente</Badge>;
     case 'paid':
       return <Badge className="bg-green-100 text-green-800">Pagado</Badge>;
+    case 'skipped':
+      return <Badge className="bg-blue-100 text-blue-800">No usado</Badge>;
 
     default:
       break;
