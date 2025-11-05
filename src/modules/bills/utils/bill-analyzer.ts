@@ -75,7 +75,7 @@ export class BillAnalyzer {
 
   /**
    * Check if a bill is due based on last payment made.
-   * Returns: true (due), false (paid), 'skipped' (zero amount), or null (no payments)
+   * Returns: true (due), 'overdue' (deadline passed), false (paid), 'skipped' (zero amount), or null (no payments)
    */
   isBillDue() {
     if (!this.bill.payments || this.bill.payments.length === 0) return null;
@@ -139,27 +139,47 @@ export class BillAnalyzer {
           this.bill.paymentDeadline
         );
 
+        // Normalize dates to compare only date parts (ignore time)
+        const normalizeDate = (date: Date) => {
+          return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        };
+
+        const normalizedLastPaymentDate = normalizeDate(lastPaymentDate);
+        const normalizedCutoffDate = normalizeDate(mostRecentCutoffDate);
+        const normalizedToday = normalizeDate(today);
+
         // Check if last payment is for the current billing cycle
-        // Payment is valid if it was made after the most recent cutoff date
+        // Payment is valid if it was made on or after the most recent cutoff date
         const hasPaymentForCurrentPeriod =
-          lastPaymentDate >= mostRecentCutoffDate;
+          normalizedLastPaymentDate >= normalizedCutoffDate;
+
+        // Check if we're past the most recent cutoff date
+        const isPastCutoffDate = normalizedToday > normalizedCutoffDate;
 
         if (!hasPaymentForCurrentPeriod) {
           // No payment for current period
-          // If deadline hasn't passed yet, show NA
-          if (today <= correspondingPaymentDeadline) {
-            return null; // NA - no payment yet for current period, deadline not reached
+          if (isPastCutoffDate) {
+            // Check if payment deadline has also passed
+            const normalizedDeadline = normalizeDate(
+              correspondingPaymentDeadline
+            );
+            if (normalizedToday > normalizedDeadline) {
+              return 'overdue'; // overdue - cutoff and deadline passed without payment
+            }
+            // Cutoff passed but deadline hasn't - still due but not overdue yet
+            return true; // due - cutoff date passed without payment for that period
           }
-          // Deadline has passed without payment
-          return true; // due - payment deadline passed without payment
+          // Cutoff date hasn't passed yet, show NA
+          return null; // NA - cutoff date not reached yet
         }
 
         // Payment exists for current period
         // Check if today is after payment deadline AND last payment was before deadline
         // This means payment deadline has passed but payment was made after deadline
+        const normalizedDeadline = normalizeDate(correspondingPaymentDeadline);
         if (
-          today > correspondingPaymentDeadline &&
-          lastPaymentDate < correspondingPaymentDeadline
+          normalizedToday > normalizedDeadline &&
+          normalizedLastPaymentDate < normalizedDeadline
         ) {
           return true; // due - payment deadline passed without timely payment
         }

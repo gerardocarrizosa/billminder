@@ -81,6 +81,8 @@ function HomeScreen() {
               status = 'NA';
             } else if (isDue === 'skipped') {
               status = 'skipped';
+            } else if (isDue === 'overdue') {
+              status = 'overdue';
             } else if (isDue) {
               status = 'due';
             } else {
@@ -96,19 +98,23 @@ function HomeScreen() {
           // Sort bills by priority
           const sortedBills = billsData.sort((a, b) => {
             const priorityOrder: Record<BillCardStatus, number> = {
-              due: 0,
-              paid: 1,
-              skipped: 2,
-              NA: 3,
+              overdue: 0,
+              due: 1,
+              paid: 2,
+              skipped: 3,
+              NA: 4,
             };
             return priorityOrder[a.status] - priorityOrder[b.status];
           });
 
           setBills(sortedBills);
 
-          // Filter important bills (due and skipped)
+          // Filter important bills (overdue, due, and skipped)
           const important = sortedBills.filter(
-            (b) => b.status === 'due' || b.status === 'skipped'
+            (b) =>
+              b.status === 'overdue' ||
+              b.status === 'due' ||
+              b.status === 'skipped'
           );
           setImportantBills(important);
 
@@ -146,17 +152,14 @@ function HomeScreen() {
   return (
     <div className="container mx-auto p-2 max-w-7xl">
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-6">
         <Dialog
           open={isPaymentDialogOpen}
           onOpenChange={setIsPaymentDialogOpen}
         >
           <DialogTrigger asChild>
-            <Button
-              size="lg"
-              className="w-full h-20 flex flex-col items-center justify-center gap-2"
-            >
-              <CreditCard className="h-6 w-6" />
+            <Button className="w-full flex flex-row items-center justify-center gap-2">
+              <CreditCard className="h-4 w-4" />
               <span>Agregar Pago</span>
             </Button>
           </DialogTrigger>
@@ -190,11 +193,10 @@ function HomeScreen() {
         </Dialog>
 
         <Button
-          size="lg"
-          className="w-full h-20 flex flex-col items-center justify-center gap-2"
+          className="w-full flex flex-row items-center justify-center gap-2"
           onClick={() => navigate('/budget/add-expense')}
         >
-          <Wallet className="h-6 w-6" />
+          <Wallet className="h-4 w-4" />
           <span>Agregar Gasto</span>
         </Button>
       </div>

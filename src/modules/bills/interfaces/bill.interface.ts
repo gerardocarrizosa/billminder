@@ -6,7 +6,7 @@ export type Bill = yup.InferType<typeof billValidationSchema>;
 
 export type BillWithIncludes = Bill & { payments?: Payment[] };
 
-export type BillCardStatus = 'paid' | 'due' | 'NA' | 'skipped';
+export type BillCardStatus = 'paid' | 'due' | 'overdue' | 'NA' | 'skipped';
 
 export interface BillCardData {
   bill: Bill;

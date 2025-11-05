@@ -44,6 +44,13 @@ function BillsScreen() {
               });
               continue;
             }
+            if (isDue === 'overdue') {
+              billsData.push({
+                bill,
+                status: 'overdue',
+              });
+              continue;
+            }
             if (isDue) {
               billsData.push({
                 bill,
@@ -59,10 +66,11 @@ function BillsScreen() {
 
           const sortedBills = billsData.sort((a, b) => {
             const priorityOrder: Record<BillCardStatus, number> = {
-              due: 0,
-              paid: 1,
-              skipped: 2,
-              NA: 3,
+              overdue: 0,
+              due: 1,
+              paid: 2,
+              skipped: 3,
+              NA: 4,
             };
             return priorityOrder[a.status] - priorityOrder[b.status];
           });
