@@ -93,7 +93,17 @@ class ExpensesService {
       const cleanedData = Object.fromEntries(
         Object.entries(updateData).filter(([_, v]) => v !== undefined)
       );
-      await updateDoc(docRef, cleanedData);
+
+      // Convert createdAt field to Firestore Timestamp if present
+      const convertedData: any = { ...cleanedData };
+      if (cleanedData.createdAt) {
+        const createdAtDate = new Date(cleanedData.createdAt);
+        const createdAtDateDay = createdAtDate.getDate();
+        createdAtDate.setDate(createdAtDateDay + 1);
+        convertedData.createdAt = Timestamp.fromDate(createdAtDate);
+      }
+
+      await updateDoc(docRef, convertedData);
     } catch (error) {
       console.error('Error updating expense:', error);
       throw error;
