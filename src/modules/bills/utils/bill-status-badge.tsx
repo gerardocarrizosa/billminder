@@ -1,20 +1,22 @@
-import { BillCardStatus } from '../interfaces/bill.interface';
-import { Badge } from '@/modules/common/components/ui/badge';
+import { BillCardStatus } from "../interfaces/bill.interface";
+import { Badge } from "@/modules/common/components/ui/badge";
 
-export const getStatusBadge = (status: BillCardStatus) => {
+function BillStatusBadge({ status }: { status: BillCardStatus }) {
   switch (status) {
-    case 'NA':
+    case "NA":
       return <Badge className="bg-gray-100 text-gray-800">NA</Badge>;
-    case 'due':
+    case "due":
       return <Badge className="bg-red-100 text-red-800">Pendiente</Badge>;
-    case 'overdue':
+    case "overdue":
       return <Badge className="bg-red-600 text-white">Vencido</Badge>;
-    case 'paid':
+    case "paid":
       return <Badge className="bg-green-100 text-green-800">Pagado</Badge>;
-    case 'skipped':
+    case "skipped":
       return <Badge className="bg-blue-100 text-blue-800">No usado</Badge>;
 
     default:
-      break;
+      return null;
   }
-};
+}
+
+export default BillStatusBadge;

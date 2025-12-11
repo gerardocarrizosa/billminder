@@ -1,14 +1,14 @@
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@/modules/common/components/ui/avatar';
-import { Button } from '@/modules/common/components/ui/button';
-import { Label } from '@/modules/common/components/ui/label';
-import { PenLine, UserIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { UserGender } from '../interfaces/user.interface';
+} from "@/modules/common/components/ui/avatar";
+import { Button } from "@/modules/common/components/ui/button";
+import { Label } from "@/modules/common/components/ui/label";
+import { PenLine, UserIcon, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { UserGender } from "../interfaces/user.interface";
 
 function UserProfileData() {
   const navigate = useNavigate();
@@ -17,14 +17,14 @@ function UserProfileData() {
 
   const getGenderString = (gender: UserGender) => {
     switch (gender) {
-      case 'female':
-        return 'Femenino';
-      case 'male':
-        return 'Masculino';
-      case 'other':
-        return 'Otro';
+      case "female":
+        return "Femenino";
+      case "male":
+        return "Masculino";
+      case "other":
+        return "Otro";
       default:
-        return 'No configurado';
+        return "No configurado";
     }
   };
 
@@ -71,11 +71,22 @@ function UserProfileData() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate('edit')}
+            onClick={() => navigate("edit")}
             className="flex items-center gap-2"
           >
             <PenLine size={16} />
+            <PenLine size={16} />
             Editar perfil
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("favorites")}
+            className="flex items-center gap-2"
+          >
+            <Star size={16} />
+            Categorías Favoritas
           </Button>
         </div>
       </div>

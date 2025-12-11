@@ -1,4 +1,4 @@
-import { BillWithIncludes } from '../interfaces/bill.interface';
+import { BillWithIncludes, BillCardStatus } from '../interfaces/bill.interface';
 
 /**
  * BillAnalyzer class encapsulates bill-related business logic
@@ -78,16 +78,16 @@ export class BillAnalyzer {
    * Returns: true (due), 'overdue' (deadline passed), false (paid), 'skipped' (zero amount), or null (no payments)
    */
   isBillDue() {
-    if (!this.bill.payments || this.bill.payments.length === 0) return null;
+    // if (!this.bill.payments || this.bill.payments.length === 0) return null;
 
-    const lastPayment = this.bill.payments[0];
+    const lastPayment = this.bill.payments?.[0];
 
     // Check if the last payment has zero amount (unused month)
-    if (lastPayment.amount === 0) {
+    if (lastPayment && lastPayment.amount === 0) {
       return 'skipped';
     }
 
-    const lastPaymentDate = lastPayment.paidAt;
+    const lastPaymentDate = lastPayment ? lastPayment.paidAt : new Date(0);
     const today = new Date();
     const todayMonth = today.getMonth();
     const todayYear = today.getFullYear();
@@ -226,7 +226,7 @@ export class BillAnalyzer {
           // No payment for current period
           // If deadline hasn't passed yet, show NA
           if (today <= currentPaymentDeadline) {
-            return null; // NA - no payment yet for current period, deadline not reached
+            return true; // due - no payment yet for current period, deadline not reached
           }
           // Deadline has passed without payment
           return true; // due - payment deadline passed without payment
@@ -275,6 +275,20 @@ export class BillAnalyzer {
   }
 
   /**
+   * Get the current status as a BillCardStatus
+   */
+  getBillStatus(): BillCardStatus {
+    const status = this.isBillDue();
+
+    if (status === 'overdue') return 'overdue';
+    if (status === 'skipped') return 'skipped';
+    if (status === true) return 'due';
+    if (status === false) return 'paid';
+
+    return 'NA';
+  }
+
+  /**
    * Get all bill analysis in a single object
    */
   getAnalysis() {
@@ -287,6 +301,7 @@ export class BillAnalyzer {
       isBillDue: this.isBillDue(),
       isPaymentDueSoon: this.isPaymentDueSoon(),
       isPaymentOverdue: this.isPaymentOverdue(),
+      billStatus: this.getBillStatus(),
       totalPayments: this.bill.payments?.length || 0,
       hasPayments: this.bill.payments && this.bill.payments.length > 0,
     };

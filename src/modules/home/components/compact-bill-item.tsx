@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { Bill } from '@/modules/bills/interfaces/bill.interface';
-import { BillCardStatus } from '@/modules/bills/interfaces/bill.interface';
-import { getStatusBadge } from '@/modules/bills/utils/bill-status-badge';
-import { getBillTypeIcon } from '@/modules/bills/utils/bill-type-icon';
-import { CalendarClockIcon } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Bill } from "@/modules/bills/interfaces/bill.interface";
+import { BillCardStatus } from "@/modules/bills/interfaces/bill.interface";
+import BillStatusBadge from "@/modules/bills/utils/bill-status-badge";
+import { getBillTypeIcon } from "@/modules/bills/utils/bill-type-icon";
+import { CalendarClockIcon } from "lucide-react";
 
 interface CompactBillItemProps {
   bill: Bill;
@@ -37,11 +37,10 @@ const CompactBillItem: React.FC<CompactBillItemProps> = ({ bill, status }) => {
         </div>
 
         {/* Status badge */}
-        <div className="flex-shrink-0">{getStatusBadge(status)}</div>
+        <BillStatusBadge status={status} />
       </div>
     </Link>
   );
 };
 
 export default CompactBillItem;
-

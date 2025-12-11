@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import billService from '@/lib/api/bills.api';
-import { useAuth } from '@/context/AuthContext';
-import { Link } from 'react-router-dom';
-import { Button } from '../../common/components/ui/button';
-import { BillCardData, BillCardStatus } from '../interfaces/bill.interface';
-import BillCard from '../components/bill-card';
-import { createBillAnalyzer } from '../utils/bill-analyzer';
-import Loader from '@/modules/common/components/loader';
-import { Plus } from 'lucide-react';
+import { useEffect, useState } from "react";
+import billService from "@/lib/api/bills.api";
+import { useAuth } from "@/context/AuthContext";
+import { Link } from "react-router-dom";
+import { Button } from "../../common/components/ui/button";
+import { BillCardData, BillCardStatus } from "../interfaces/bill.interface";
+import BillCard from "../components/bill-card";
+import { createBillAnalyzer } from "../utils/bill-analyzer";
+import Loader from "@/modules/common/components/loader";
+import { Plus } from "lucide-react";
 
 function BillsScreen() {
   const [bills, setBills] = useState<BillCardData[]>([]);
@@ -33,33 +33,33 @@ function BillsScreen() {
             if (isDue === null) {
               billsData.push({
                 bill,
-                status: 'NA',
+                status: "NA",
               });
               continue;
             }
-            if (isDue === 'skipped') {
+            if (isDue === "skipped") {
               billsData.push({
                 bill,
-                status: 'skipped',
+                status: "skipped",
               });
               continue;
             }
-            if (isDue === 'overdue') {
+            if (isDue === "overdue") {
               billsData.push({
                 bill,
-                status: 'overdue',
+                status: "overdue",
               });
               continue;
             }
             if (isDue) {
               billsData.push({
                 bill,
-                status: 'due',
+                status: "due",
               });
             } else {
               billsData.push({
                 bill,
-                status: 'paid',
+                status: "paid",
               });
             }
           }
@@ -78,8 +78,8 @@ function BillsScreen() {
           setBills(sortedBills);
         }
       } catch (err) {
-        console.error('Error fetching bills:', err);
-        setError('Failed to load bills. Please try again later.');
+        console.error("Error fetching bills:", err);
+        setError("Failed to load bills. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -113,9 +113,11 @@ function BillsScreen() {
 
       {bills.length === 0 ? (
         <div className="text-center py-16 rounded-lg shadow-sm">
-          <p className="text-gray-500 mb-6">No tienes gastos registrados.</p>
+          <p className="text-gray-500 mb-6">
+            No tienes recordatorios registrados.
+          </p>
           <Link to="create">
-            <Button>Nuevo gasto</Button>
+            <Button>Nuevo recordatorio</Button>
           </Link>
         </div>
       ) : (

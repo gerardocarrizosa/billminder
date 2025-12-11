@@ -1,14 +1,5 @@
-import React from 'react';
-import { useField } from 'formik';
-import { Label } from './ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
-import { Badge } from './ui/badge';
+import React from "react";
+import { useField } from "formik";
 
 interface Option {
   label: string;
@@ -24,67 +15,73 @@ interface FormSelectProps {
   disabled?: boolean;
   className?: string;
   optionBadge?: boolean;
+  value?: string | number;
+  onChange?: (value: string | number) => void;
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
   label,
   name,
   options,
-  placeholder = 'Select an option',
+  placeholder = "Select an option",
   disabled = false,
   className,
-  optionBadge,
+  // optionBadge,
+  value,
+  onChange,
 }) => {
   const [field, meta, helpers] = useField(name);
 
-  const stringValue =
-    field.value !== null && field.value !== undefined
-      ? field.value.toString()
-      : '';
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
 
-  const handleValueChange = (newValue: string) => {
+    // Find the original option to get the correct type (number vs string) if needed
+    // although html select always returns string, we try to match the original value type if possible
+    // or just stick to string as per FormSelect logic which normalized to string somewhat but stored original value.
     const selectedOption = options.find(
       (opt) => opt.value.toString() === newValue
     );
 
-    if (selectedOption) {
-      helpers.setValue(selectedOption.value);
-    } else {
-      helpers.setValue(newValue);
+    const valueToSet = selectedOption ? selectedOption.value : newValue;
+
+    helpers.setValue(valueToSet);
+
+    if (onChange) {
+      onChange(valueToSet);
     }
   };
 
+  const hasError = meta.touched && meta.error;
+
   return (
-    <div className={`mb-4 ${className}`}>
-      <Label htmlFor={name} className="block text-sm font-medium mb-1">
-        {label}
-      </Label>
-      <Select
-        value={stringValue}
-        onValueChange={handleValueChange}
+    <div className={`form-control w-full ${className || ""}`}>
+      <label htmlFor={name} className="label">
+        <span className="label-text font-medium">{label}</span>
+      </label>
+      <select
+        id={name}
+        className={`select select-bordered w-full rounded-lg ${
+          hasError ? "select-error" : ""
+        }`}
+        value={field.value ?? value}
+        onChange={handleChange}
         disabled={disabled}
+        onBlur={field.onBlur} // Important for Formik touched state
       >
-        <SelectTrigger
-          id={name}
-          className={`w-full ${
-            meta.touched && meta.error ? 'border-red-500' : ''
-          }`}
-        >
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value.toString()}>
-              {optionBadge && (
-                <Badge style={{ backgroundColor: opt.color }}></Badge>
-              )}
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {meta.touched && meta.error && (
-        <p className="text-sm text-red-500 mt-1">{meta.error}</p>
+        <option value="" disabled>
+          {placeholder}
+        </option>
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value.toString()}>
+            {/* Note: optionBadge cannot be rendered effectively inside a native option tag */}
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      {hasError && (
+        <div className="label">
+          <span className="label-text-alt text-error">{meta.error}</span>
+        </div>
       )}
     </div>
   );

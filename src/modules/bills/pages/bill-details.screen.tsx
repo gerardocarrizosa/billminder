@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/modules/common/components/ui/button';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/modules/common/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/modules/common/components/ui/card';
+} from "@/modules/common/components/ui/card";
 import {
   DollarSign,
   Clock,
@@ -16,18 +16,18 @@ import {
   ChevronLeft,
   Edit,
   Plus,
-} from 'lucide-react';
-import { formatDate } from '../../common/utils/format-date';
-import { Link, useParams } from 'react-router-dom';
-import { BillWithIncludes } from '../interfaces/bill.interface';
-import { getBillTypeIcon } from '../utils/bill-type-icon';
-import { getBillTypeLabel } from '../utils/bill-type-label';
-import billService from '@/lib/api/bills.api';
-import PaymentsHistoryTable from '../components/payments-history-table';
-import { createBillAnalyzer } from '../utils/bill-analyzer';
-import { formatCurrency } from '../../common/utils/format-currency';
-import { getStatusBadge } from '../utils/bill-status-badge';
-import Loader from '@/modules/common/components/loader';
+} from "lucide-react";
+import { formatDate } from "../../common/utils/format-date";
+import { Link, useParams } from "react-router-dom";
+import { BillWithIncludes } from "../interfaces/bill.interface";
+import { getBillTypeIcon } from "../utils/bill-type-icon";
+import { getBillTypeLabel } from "../utils/bill-type-label";
+import billService from "@/lib/api/bills.api";
+import PaymentsHistoryTable from "../components/payments-history-table";
+import { createBillAnalyzer } from "../utils/bill-analyzer";
+import { formatCurrency } from "../../common/utils/format-currency";
+import Loader from "@/modules/common/components/loader";
+import BillStatusBadge from "../utils/bill-status-badge";
 
 const BillDetailsScreen: React.FC = () => {
   const { billId } = useParams();
@@ -81,7 +81,8 @@ const BillDetailsScreen: React.FC = () => {
     nextPaymentDue,
     isPaymentDueSoon,
     isPaymentOverdue,
-    isBillDue,
+    // isBillDue,
+    billStatus,
   } = analyzer.getAnalysis();
 
   return (
@@ -89,7 +90,7 @@ const BillDetailsScreen: React.FC = () => {
       <div className="mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
           <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <Link to={'/bills'}>
+            <Link to={"/bills"}>
               <Button variant="outline" size="icon" className="h-8 w-8">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -180,15 +181,7 @@ const BillDetailsScreen: React.FC = () => {
               {/* status based on the last payment */}
               <div className="flex justify-between mb-4">
                 <h3 className="text-base font-medium mb-1">Próximo pago</h3>
-                {isBillDue === 'skipped' ? (
-                  <div>{getStatusBadge('skipped')}</div>
-                ) : isBillDue ? (
-                  <div>{getStatusBadge('due')}</div>
-                ) : isBillDue === null ? (
-                  <div>{getStatusBadge('NA')}</div>
-                ) : (
-                  <div>{getStatusBadge('paid')}</div>
-                )}
+                <BillStatusBadge status={billStatus} />
               </div>
 
               {/* payment deadline date */}
@@ -209,10 +202,10 @@ const BillDetailsScreen: React.FC = () => {
                       <p
                         className={`text-lg font-semibold ${
                           isPaymentOverdue
-                            ? 'text-red-500'
+                            ? "text-red-500"
                             : isPaymentDueSoon
-                            ? 'text-amber-500'
-                            : 'text-green-500'
+                            ? "text-amber-500"
+                            : "text-green-500"
                         }`}
                       >
                         {formatDate(nextPaymentDue)}

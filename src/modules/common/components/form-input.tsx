@@ -1,7 +1,5 @@
-import React from 'react';
-import { useField } from 'formik';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
+import React from "react";
+import { useField } from "formik";
 
 interface FormInputProps {
   label: string;
@@ -15,34 +13,38 @@ interface FormInputProps {
 const FormInput: React.FC<FormInputProps> = ({
   label,
   name,
-  type = 'text',
-  placeholder = '',
+  type = "text",
+  placeholder = "",
   disabled = false,
   className,
 }) => {
   const [field, meta] = useField(name);
 
-  if (type === 'date' && typeof field.value === 'object') {
-    field.value = field.value.toISOString().split('T')[0];
+  if (type === "date" && typeof field.value === "object") {
+    field.value = field.value.toISOString().split("T")[0];
   }
 
+  const hasError = meta.touched && meta.error;
+
   return (
-    <div className={`space-y-2 ${className}`}>
-      <Label htmlFor={name}>{label}</Label>
-      <Input
+    <div className={`form-control w-full ${className || ""}`}>
+      <label htmlFor={name} className="label pb-1">
+        <span className="label-text font-medium">{label}</span>
+      </label>
+      <input
         {...field}
         id={name}
         type={type}
         placeholder={placeholder}
         disabled={disabled}
-        className={`${
-          meta.touched && meta.error
-            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-            : ''
-        } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+        className={`input input-bordered w-full rounded-lg ${
+          hasError ? "input-error" : ""
+        }`}
       />
-      {meta.touched && meta.error && (
-        <p className="text-sm text-red-500 mt-1">{meta.error}</p>
+      {hasError && (
+        <div className="label pt-1">
+          <span className="label-text-alt text-error">{meta.error}</span>
+        </div>
       )}
     </div>
   );

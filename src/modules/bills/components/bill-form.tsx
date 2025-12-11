@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Formik, Form } from 'formik';
-import { ChevronLeft } from 'lucide-react';
-import { Bill } from '@/modules/bills/interfaces/bill.interface';
-import { useAuth } from '@/context/AuthContext';
-import { billValidationSchema } from '../interfaces/bill.validation-schema';
-import { Button } from '@/modules/common/components/ui/button';
-import billService from '@/lib/api/bills.api';
-import FormInput from '@/modules/common/components/form-input';
-import FormSelect from '@/modules/common/components/form-select';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Formik, Form } from "formik";
+import { ChevronLeft } from "lucide-react";
+import { Bill } from "@/modules/bills/interfaces/bill.interface";
+import { useAuth } from "@/context/AuthContext";
+import { billValidationSchema } from "../interfaces/bill.validation-schema";
+import { Button } from "@/modules/common/components/ui/button";
+import billService from "@/lib/api/bills.api";
+import FormInput from "@/modules/common/components/form-input";
+import FormSelect from "@/modules/common/components/form-select";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/modules/common/components/ui/card';
-import toast from 'react-hot-toast';
-import Loader from '@/modules/common/components/loader';
+} from "@/modules/common/components/ui/card";
+import toast from "react-hot-toast";
+import Loader from "@/modules/common/components/loader";
 
 interface BillFormProps {
   bill?: Bill;
@@ -42,31 +42,31 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
   }
 
   const today = new Date();
-  const initialValues: Omit<Bill, 'id'> = {
-    name: '',
-    type: 'credit_card',
-    status: 'active',
+  const initialValues: Omit<Bill, "id"> = {
+    name: "",
+    type: "credit_card",
+    status: "active",
     createdAt: today,
     updatedAt: today,
     userId: user.id,
-    color: '',
+    color: "",
   };
 
   const formInitialValues = isEditing && bill ? bill : initialValues;
 
-  const handleSubmit = async (values: Omit<Bill, 'id'>) => {
+  const handleSubmit = async (values: Omit<Bill, "id">) => {
     try {
       if (isEditing && bill && bill.id) {
         await billService.update(bill.id, values);
-        toast.success('Gasto actualizado con éxito');
+        toast.success("Gasto actualizado con éxito");
       } else {
         await billService.create(values as Bill);
-        toast.success('Gasto creado con éxito');
+        toast.success("Gasto creado con éxito");
       }
-      navigate('/bills');
+      navigate("/bills");
     } catch (err) {
-      console.error('Error saving bill:', err);
-      toast.error('Error al guardar el gasto');
+      console.error("Error saving bill:", err);
+      toast.error("Error al guardar el gasto");
     }
   };
 
@@ -75,19 +75,21 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
       <CardHeader>
         <div className="flex items-center gap-4 mb-2">
           <Button
-            onClick={() => navigate('/bills')}
+            onClick={() => navigate("/bills")}
             variant="outline"
             size="icon"
             className="h-8 w-8"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <CardTitle>{isEditing ? 'Editar gasto' : 'Nuevo gasto'}</CardTitle>
+          <CardTitle>
+            {isEditing ? "Editar recordatorio" : "Nuevo recordatorio"}
+          </CardTitle>
         </div>
         <CardDescription>
           {isEditing
-            ? 'Actualiza los datos de tu gasto'
-            : 'Registra un nuevo gasto'}
+            ? "Actualiza los datos de tu recordatorio"
+            : "Registra un nuevo recordatorio"}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -106,9 +108,9 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                     label="Tipo"
                     name="type"
                     options={[
-                      { label: 'Tarjeta de credito', value: 'credit_card' },
-                      { label: 'Servicio', value: 'service' },
-                      { label: 'Subscripción', value: 'subscription' },
+                      { label: "Tarjeta de credito", value: "credit_card" },
+                      { label: "Servicio", value: "service" },
+                      { label: "Subscripción", value: "subscription" },
                     ]}
                   />
                   <FormInput
@@ -118,7 +120,7 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                     className="w-24"
                   />
                 </div>
-                {values.type === 'credit_card' && (
+                {values.type === "credit_card" && (
                   <FormInput
                     label="Fecha de corte"
                     name="cutoffDate"
@@ -137,8 +139,8 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                     label="Status"
                     name="status"
                     options={[
-                      { label: 'Activa', value: 'active' },
-                      { label: 'Inactiva', value: 'inactive' },
+                      { label: "Activa", value: "active" },
+                      { label: "Inactiva", value: "inactive" },
                     ]}
                   />
                 )}
@@ -148,7 +150,7 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                 <Button
                   variant="outline"
                   type="button"
-                  onClick={() => navigate('/bills')}
+                  onClick={() => navigate("/bills")}
                 >
                   Cancelar
                 </Button>
@@ -156,9 +158,9 @@ const BillForm: React.FC<BillFormProps> = ({ bill, isEditing = false }) => {
                   {isSubmitting ? (
                     <span className="loading loading-spinner loading-sm"></span>
                   ) : isEditing ? (
-                    'Guardar cambios'
+                    "Guardar cambios"
                   ) : (
-                    'Crear gasto'
+                    "Crear gasto"
                   )}
                 </Button>
               </div>
