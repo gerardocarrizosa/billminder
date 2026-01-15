@@ -37,7 +37,7 @@ const FormInput: React.FC<FormInputProps> = ({
         type={type}
         placeholder={placeholder}
         disabled={disabled}
-        className={`input input-bordered w-full rounded-lg ${
+        className={`input input-bordered border w-full rounded-lg ${
           hasError ? "input-error" : ""
         }`}
       />

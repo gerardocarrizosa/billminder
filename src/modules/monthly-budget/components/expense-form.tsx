@@ -93,7 +93,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   };
 
   return (
-    <div className="mx-auto rounded-lg shadow-md">
+    <div className="mx-auto rounded-lg">
       <Formik
         initialValues={formInitialValues}
         validationSchema={expenseSchema}

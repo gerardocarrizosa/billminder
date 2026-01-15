@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Button } from '@/modules/common/components/ui/button';
-import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
-import { formatDate } from '../../common/utils/format-date';
-import { Payment } from '../interfaces/payment.interface';
-import { useTheme } from '@/modules/common/components/theme-controller';
-import { formatCurrency } from '@/modules/common/utils/format-currency';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button } from "@/modules/common/components/ui/button";
+import { ChevronLeft, ChevronRight, Edit } from "lucide-react";
+import { formatDate } from "../../common/utils/format-date";
+import { Payment } from "../interfaces/payment.interface";
+import { useTheme } from "@/modules/common/components/theme-controller";
+import { formatCurrency } from "@/modules/common/utils/format-currency";
+import { useNavigate } from "react-router-dom";
 
 interface PaymentsHistoryTableProps {
   payments: Payment[];
@@ -20,9 +20,9 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
   const currentPageSize = 5;
   // const [currentPageSize, setCurrentPageSize] = useState(5);
 
-  const headerClass = theme === 'dark' ? 'bg-background/20' : 'bg-muted/50';
+  const headerClass = theme === "black" ? "bg-background/20" : "bg-muted/50";
   const rowHoverClass =
-    theme === 'dark' ? 'hover:bg-muted/10' : 'hover:bg-muted/30';
+    theme === "black" ? "hover:bg-muted/10" : "hover:bg-muted/30";
 
   const totalPages = Math.ceil(payments.length / currentPageSize);
   const startIndex = (currentPage - 1) * currentPageSize;
@@ -81,7 +81,7 @@ const PaymentsHistoryTable: React.FC<PaymentsHistoryTableProps> = ({
                 </div>
               </td>
               <td className="px-4 py-3">
-                {formatDate(payment.paidAt, { month: 'numeric' })}
+                {formatDate(payment.paidAt, { month: "numeric" })}
               </td>
               {/* <td className="px-4 py-3">{formatDate(payment.createdAt)}</td> */}
               <td className="px-4 py-3 text-right">

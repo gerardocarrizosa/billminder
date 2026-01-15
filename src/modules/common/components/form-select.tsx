@@ -60,7 +60,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
       </label>
       <select
         id={name}
-        className={`select select-bordered w-full rounded-lg ${
+        className={`select select-bordered border w-full rounded-lg ${
           hasError ? "select-error" : ""
         }`}
         value={field.value ?? value}

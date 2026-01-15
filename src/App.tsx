@@ -125,7 +125,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="black" storageKey="vite-ui-theme">
       <AuthProvider>
         <Toaster />
         <RouterProvider router={router} />

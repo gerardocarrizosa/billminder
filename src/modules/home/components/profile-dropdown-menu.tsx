@@ -1,16 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/modules/common/components/ui/dropdown-menu';
-import { User, UserCircle, LogOut, Sun, Moon } from 'lucide-react';
-import { auth } from '@/lib/firebase';
-import toast from 'react-hot-toast';
-import { useTheme } from '@/modules/common/components/theme-controller';
+} from "@/modules/common/components/ui/dropdown-menu";
+import { User, UserCircle, LogOut, Sun, Moon } from "lucide-react";
+import { auth } from "@/lib/firebase";
+import toast from "react-hot-toast";
+import { useTheme } from "@/modules/common/components/theme-controller";
 
 const ProfileDropdown = () => {
   const { setTheme, theme } = useTheme();
@@ -19,18 +19,18 @@ const ProfileDropdown = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Error signing out:', error);
-      toast.error('Failed to sign out. Please try again.');
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out. Please try again.");
     }
   };
 
   const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
+    if (theme === "black") {
+      setTheme("light");
     } else {
-      setTheme('dark');
+      setTheme("black");
     }
   };
 
@@ -53,7 +53,7 @@ const ProfileDropdown = () => {
 
         <DropdownMenuItem asChild onClick={toggleTheme}>
           <div>
-            {theme === 'dark' ? (
+            {theme === "black" ? (
               <Sun className="mr-2 h-4 w-4" />
             ) : (
               <Moon className="mr-2 h-4 w-4" />
